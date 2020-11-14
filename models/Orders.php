@@ -24,8 +24,8 @@ class Orders extends CI_Model {
 		*/
     function obtenerHerramientasPanol($pano_id)
     {
-
-			$aux = $this->rest->callAPI("GET",REST_PAN."/herramientas/panol/".$pano_id);
+			$estado = "ACTIVO";
+			$aux = $this->rest->callAPI("GET",REST_PAN."/herramientas/panol/".$pano_id."/estado/".$estado);
 			$aux =json_decode($aux["data"]);
 			$herram = $aux->herramientas->herramienta;
 			//FIXME: VER CUANDO NO TRAE NADA
@@ -48,14 +48,28 @@ class Orders extends CI_Model {
     }
 
 		/**
+		* devuelve establecimientos por empr_id
+		* @param
+		* @return array con establecimientosde una empresa
+		*/
+		function obtenerEstablecimientos()
+		{
+			$empr_id = empresa();
+			$aux = $this->rest->callAPI("GET",REST_PAN."/establecimientos/empresa/".$empr_id);
+			$aux =json_decode($aux["data"]);
+			return $aux->establecimientos->establecimiento;
+
+		}
+
+
+		/**
 		* Obtiene los pañoles propios de una empresa
 		* @param
 		* @return array con pañoles
 		*/
-		function obtenerPanoles(){
+		function obtenerPanoles($esta_id){
 
-			$empr_id = empresa();
-			$aux = $this->rest->callAPI("GET",REST_PAN."/panoles/empresa/".$empr_id);
+			$aux = $this->rest->callAPI("GET",REST_PAN."/panol/establecimiento/".$esta_id);
 			$aux =json_decode($aux["data"]);
 			return $aux->panoles->panol;
 		}

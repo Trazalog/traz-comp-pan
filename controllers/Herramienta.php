@@ -9,26 +9,25 @@ class Herramienta extends CI_Controller {
 
 
 	function __construct()
-		{
+	{
 		parent::__construct();
 		$this->load->model('Herramientas');
 		
 	}
 
- /**
- * Controlador por defecto. Muestra listado de las herramientas.
- *
- * @param
- * @return  void
- */
+	/**
+	 * Controlador por defecto. Muestra listado de las herramientas.
+	 *
+	 * @param
+	 * @return  void
+	 */
 	public function index()
 	{
-		//$data['list'] = $this->Herramientas->listar_herramientas();
 		$data['marcas'] = $this->Herramientas->obtenerMarcas();
-		$data['panoles'] = $this->Herramientas->obtenerPanoles();
+		$data['establecimientos'] = $this->Herramientas->obtenerEstablecimientos();
+		//$data['panoles'] = $this->Herramientas->obtenerPanoles();
 		$this->load->view('herramienta/view_', $data);
 	}
-
 
 	/**
 	* Obtiene listado de herramientas
@@ -42,7 +41,6 @@ class Herramienta extends CI_Controller {
 		$this->load->view('herramienta/list', $data);
 	}
 
-
 	/**
 	* devuelve pañoles propios de una empresa
 	* @param
@@ -50,7 +48,7 @@ class Herramienta extends CI_Controller {
 	*/
 	public function obtenerPanoles(){
 		log_message('INFO','#TRAZA|TRAZ-COMP-PANOL|HERRAMIENTAS|OBTENERPANOLES >> ');
-		$resp = $this->Herramientas->obtenerPanoles();
+		$resp = $this->Herramientas->obtenerPanoles($this->input->post('esta_id'));
 		echo json_encode($resp);
 	}
 
@@ -66,33 +64,35 @@ class Herramienta extends CI_Controller {
 		echo json_encode($resp);
 	}
 
-	public function guardar()
+
+	/**
+	* guarda herramientas en pañol
+	* @param array herramientas
+	* @return bool true o false segun resultado de servicio de guardado
+	*/
+	function guardar()
 	{
 
-				$datos  = $this->input->post('herramientas');
-
-
-					$existe = $this->Herramientas->existeHerramienta( $datos['herrcodigo'] );
-					if($existe) {
-							echo "existe";
-					} else {
-							$result = $this->Herramientas->agregar_herramientas($datos);
-							if($result)
-									echo $this->db->insert_id();
-							else echo 0;
-					}
-
+		$herram = $this->input->post('datos');
+		$herram['usuario_app'] = userNick();
+		$herram['empr_id'] = empresa();
+		$resp = $this->Herramientas->guardar($herram);
+		return json_encode($resp);
 	}
 
-
-	public function edit_herramienta()
+	/**
+	* Edita la info de herramienta
+	* @param array con informacion de herramienta
+	* @return bool true o false respuesta del servicio
+	*/
+	function editar()
 	{
-			$datos  = $this->input->post('parametros');
-			$id     = $this->input->post('ed');
-			$result = $this->Herramientas->update_editar($datos,$id);
-			return true;
+		$herram = $this->input->post('datos');
+		$herram['usuario_app'] = userNick();
+		$herram['empr_id'] = empresa();
+		$resp = $this->Herramientas->editar($herram);
+		echo json_encode($resp);
 	}
-
 
 	/**
 	* Borrado de herramienta por id
@@ -106,7 +106,5 @@ class Herramienta extends CI_Controller {
 		$result = $this->Herramientas->borrarHerramienta($herr_id);
 		echo json_encode($result);
 	}
-
-
 
 }

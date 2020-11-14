@@ -33,7 +33,23 @@
 
 			<div class="box-body">
 
-					<form class="formsalida registerForm" id="Frm_salida" method="POST" autocomplete="off">
+					<form class="formsalida registerForm" id="frm_salida" method="POST" autocomplete="off">
+
+              <!--Establecimientos-->
+              <div class="col-md-8 col-sm-8 col-xs-12">
+                <div class="form-group">
+                <label for="esta_id">Establecimientos<strong style="color: #dd4b39">*</strong>:</label>
+                <select type="text" id="esta_id" name="" class="form-control selec_habilitar" >
+                    <option value="" disabled selected>-Seleccione opcion-</option>
+                    <?php
+                        foreach ($establecimientos as $establec) {
+                            echo '<option  value="'.$establec->esta_id.'">'.$establec->nombre.'</option>';
+                        }
+                    ?>
+                </select>
+                </div>
+              </div>
+              <!--________________-->
 
 							<!--Responsable-->
 							<div class="col-md-6 col-sm-6 col-xs-12">
@@ -55,14 +71,14 @@
 											<label for="pano_id">Pañol:</label>
 											<div class="input-group date">
 													<div class="input-group-addon"><i class="glyphicon glyphicon-check"></i></div>
-                          <select class="form-control select3" data-placeholder="Seleccione tipo residuo"  style="width: 100%;"  id="pano_id" name="pano_id">
-                            <option value="" disabled selected>-Seleccione opcion-</option>
+                          <select class="form-control select3" data-placeholder="Seleccione tipo residuo"  style="width: 100%;"  id="pano_id" name="pano_id"/>
+                            <!-- <option value="" disabled selected>-Seleccione opcion-</option>
 															<?php
-																	foreach ($panoles as $panol) {
-                                    echo '<option  value="'.$panol->pano_id.'">'.$panol->descripcion.'</option>';
-                                }
+																// 	foreach ($panoles as $panol) {
+                                //     echo '<option  value="'.$panol->pano_id.'">'.$panol->descripcion.'</option>';
+                                // }
 															?>
-													</select>
+													</select> -->
 											</div>
 									</div>
 							</div>
@@ -105,27 +121,24 @@
               <!--_________________SEPARADOR_________________-->
 
               <!--Herramientas-->
-
-              <div class="row">
-                <div class="col-xs-12">
+                <div class="col-md-12 col-sm-12 col-xs-12">
                   <label for="tools">Herramientas<strong style="color: #dd4b39">*</strong>:</label>
-                  <select type="text" id="tools" name="tools" class="form-control selec_habilitar" >
-                    <option value="" disabled selected>-Seleccione opcion-</option>
-                    <?php
-                        foreach ($items as $item) {
-                            echo '<option  value="'.$item['herrId'].'">Codigo: '.$item['herrcodigo'].' - Descripción: '.$item['herrdescrip'].' - Marca: '.$item['herrmarca'].'</option>';
-                        }
-                    ?>
+                  <select type="text" id="tools" name="tools" class="form-control selec_habilitar" style="width: 100%">
+                    <option></option>
                   </select>
                 </div>
-              </div><br>
+              <!--_____________________________________________-->
 
-              <div class="row">
-                <div class="col-xs-12">
+              <!--_________________SEPARADOR_________________-->
+                <div class="col-md-12">
+                  <br>
+                  </div>
+              <!--_________________SEPARADOR_________________-->
+
+              <!--Guardar-->
+              <div class="col-md-12 col-sm-12 col-xs-12">
                   <button type="button" class="botones btn btn-primary" onclick="javascript:armartablistherr()">Agregar</button>
-                </div>
-              </div><br>
-
+              </div>
               <!--_____________________________________________-->
 
               <!--_________________SEPARADOR_________________-->
@@ -194,7 +207,7 @@
 
 <script>
 
-$("#cargar_tabla").load("<?php echo base_url(); ?>index.php/Order/listarSalidas");
+$("#cargar_tabla").load("<?php echo base_url(PAN); ?>Order/listarSalidas");
 
 // muestra box de datos al dar click en boton agregar
 $("#botonAgregar").on("click", function() {
@@ -230,6 +243,42 @@ $("#btnclose").on("click", function() {
 
 //////////////////////////////////////////////////////////////
 
+
+// al cambiar de establecimiento llena select con pañoles
+$("#esta_id").change(function(){
+
+    wo();
+    //limpia las opciones de pañol
+    $('#pano_id').empty();
+
+    var esta_id = $(this).val();
+
+    $.ajax({
+        type: 'POST',
+        data:{esta_id:esta_id },
+        url: 'index.php/<?php echo PAN ?>Order/obtenerPanoles',
+        success: function(result) {
+
+              $('#pano_id').empty();
+              panol = JSON.parse(result);
+              var html = "";
+              html = html + '<option value="" disabled selected>-Seleccione Pañol-</option>';
+              $.each(panol, function(i,h){
+                html = html + "<option data-json= '" + JSON.stringify(h) + "'value='" + h.pano_id + "'>" + h.descripcion + "</option>";
+              });
+              $('#pano_id').append(html);
+              wc();
+        },
+        error: function(result){
+          alert('error');
+        }
+    });
+});
+
+
+
+
+
 // Habilita select de herramientas al cambiar de pañol
 $("#pano_id").change(function(){
       wo();
@@ -241,7 +290,7 @@ $("#pano_id").change(function(){
       $.ajax({
           type: 'POST',
           data:{pano_id: pano_id},
-          url: 'index.php/Order/obtenerHerramientasPanol',
+          url: 'index.php/<?php echo PAN ?>Order/obtenerHerramientasPanol',
           success: function(result) {
 
           //FIXME: VER CUANDO NO TRAE NADA
@@ -269,17 +318,17 @@ $("#pano_id").change(function(){
 
 // Agregar Herramientas
 function armartablistherr(){   // inserta valores en la tabla
-      $("#pano").attr('disabled', 'disabled');
-      var $herramienta = $("#tools").find(':selected').text();
-      var $herrId = $("#tools").find(':selected').val();
-      $('#tools').val(null).trigger('change');
+    //$("#pano_id").attr('disabled', 'disabled');
+    var $herramienta = $("#tools").find(':selected').text();
+    var $herrId = $("#tools").find(':selected').val();
+    $('#tools').val(null).trigger('change');
 
-      $(".tablalistherram tbody").append(
-        '<tr>'+
-        '<td><button type="button" title="Eliminar" class="btn btn-primary btn-circle btnEliminar" id="btnBorrar"  ><span class="glyphicon glyphicon-trash" aria-hidden="true" ></span></button></td>'+
-        '<td>'+ $herramienta +'</td>'+
-        '<td class="herram hidden" id="">'+ $herrId +'</td>'+
-        '<tr>');
+    $(".tablalistherram tbody").append(
+      '<tr>'+
+      '<td><button type="button" title="Eliminar" class="btn btn-primary btn-circle btnEliminar" id="btnBorrar"  ><span class="glyphicon glyphicon-trash" aria-hidden="true" ></span></button></td>'+
+      '<td>'+ $herramienta +'</td>'+
+      '<td class="herram hidden" id="">'+ $herrId +'</td>'+
+      '<tr>');
 }
 
 // Evento que selecciona la fila y la elimina
@@ -288,8 +337,10 @@ $(document).on("click",".btnEliminar",function(){
     var parent = $(this).closest('tr');
     $(parent).remove();
 
-    if( ! $('#tablalistherram').DataTable().data().any() ) {
-      $('#pano').prop("disabled", "");
+    if( !$('#tablalistherram').DataTable().data().any() ) {
+      alert('entre');
+      $('select#pano_id').prop('disabled', null);
+      //$("select#pano_id").removeAttr("disabled");
     }
 });
 
@@ -297,8 +348,8 @@ $(document).on("click",".btnEliminar",function(){
 /////////////////////////////////////////////////////////
 function guardar(){
 
-
-  var form = $('#Frm_salida')[0];
+  //debugger;
+  var form = $('#frm_salida')[0];
  // Create an FormData object
   var datos = new FormData(form);
   var datos = formToObject(datos);
@@ -320,12 +371,17 @@ function guardar(){
       // contentType: false,
       // cache: false,
       //dataType: 'JSON',
-      url: 'index.php/Order/guardar',
+      url: 'index.php/<?php echo PAN ?>Order/guardar',
       success: function(result) {
 
-        $("#cargar_tabla").load("<?php echo base_url(); ?>index.php/Order/listarSalidas");
+        $("#cargar_tabla").load("<?php echo base_url(PAN); ?>Order/listarSalidas");
 
         alertify.success("Vale de Salida Agregado con Exito");
+
+        $("#boxDatos").hide(500);
+        $("#frm_salida")[0].reset();
+        $("#botonAgregar").removeAttr("disabled");
+
       },
       error: function(result){
         alertify.error("Error agregando Vale de Salida");
@@ -337,16 +393,11 @@ function guardar(){
 
 }
 
-
-
-$("#vales").Datatable();
-// Configuracion del select2
-$(document).ready(function() {
-  $('#tools').select2({
-    placeholder: 'Seleccione una herramienta',
-    allowClear: true,
-    disabled: true
-  });
+// configuracion select2
+$("#tools").select2({
+    placeholder: "Seleccione una herramienta...",
+    width: 'resolve', // need to override the changed default
+    allowClear: true
 });
 
 

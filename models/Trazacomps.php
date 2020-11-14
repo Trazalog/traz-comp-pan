@@ -2,10 +2,141 @@
 
 class Trazacomps extends CI_Model {
 	
-    function __construct()
-	{
-		parent::__construct();
-	}
+		function __construct()
+		{
+			parent::__construct();
+		}
+
+    /**
+    * Devuelve lostado de equipos por empresa
+    * @param
+    * @return array equipos
+    */
+    function obtenerEquipos()
+    {
+        log_message('INFO','#TRAZA|TRAZA-COMP-PAN|TRAZACOMPS|OBTENEREQUIPOS >> ');
+        $empr_id = empresa();
+        $aux = $this->rest->callAPI("GET",REST_PAN."/equipos/".$empr_id);
+        $aux =json_decode($aux["data"]);
+        return $aux->equipos->equipo;
+    }
+
+		/**
+		* devuelvelistado de componentes por id de equipo
+		* @param int equi_id
+		* @return array con componentes
+		*/
+		function getComponentes($equi_id)
+		{
+			log_message('DEBUG','#TRAZA|TRAZ-COMP-PANOL|TRAZACOMPS|GETCOMPONENTES  $equi_id: >> '.json_encode($equi_id));
+			$aux = $this->rest->callAPI("GET",REST_PAN."/componentes/equipo/".$equi_id);
+			$aux =json_decode($aux["data"]);
+			return $aux->componentes->componente;
+		}
+
+		/**
+		* devuelve llistado de componentes por pañol
+		* @param int pano_id
+		* @return array de componentes de un pañol
+		*/
+		function obtenerComponentesPanol($pano_id)
+		{
+				log_message('INFO','#TRAZA|| >> ');
+				$aux = $this->rest->callAPI("GET",REST_PAN."/componentes/panol/".$pano_id);
+				$aux =json_decode($aux["data"]);
+				return $aux->componentes->componente;
+		}
+
+		/**
+		* Obtiene los pañoles propios de una empresa
+		* @param
+		* @return array con pañoles
+		*/
+		function obtenerPanoles(){
+
+			log_message('INFO','#TRAZA|TRAZA-COMP-PAN|TRAZACOMPS|OBTENERPANOLES >> ');
+			$empr_id = empresa();
+			$aux = $this->rest->callAPI("GET",REST_PAN."/panoles/empresa/".$empr_id);
+			$aux =json_decode($aux["data"]);
+			return $aux->panoles->panol;
+		}
+
+		/**
+		* devuelve estanterias por pañol
+		* @param int pano_id
+		* @return array con info de estanterias
+		*/
+		function obtenerEstanterias($pano_id)
+		{
+			log_message('INFO','#TRAZA|TRAZA-COMP-PAN|TRAZACOMPS|OBTENERESTANTERIAS >> ');
+			$aux = $this->rest->callAPI("GET",REST_PAN."/estanterias/panol/".$pano_id);
+			$aux =json_decode($aux["data"]);
+			return $aux->estanterias->estanteria;
+		}
+
+		/**
+		* guarda estanteria nueva
+		* @param array con datos de estanteria
+		* @return bool true o false resultado del servicio
+		*/
+		function guardarEstateria($estanteria)
+		{
+			log_message('INFO','#TRAZA|| >> ');
+			$post['_postestanterias'] = $estanteria;
+			log_message('DEBUG','#TRAZA|TRAZ-COMP-PAN|TRAZACOMPS|GUARDARESTANTERIA| $pòst: >> '.json_encode($post));
+			$aux = $this->rest->callAPI("POST", REST_PAN."/estanterias", $post);
+			$aux =json_decode($aux["status"]);
+			return $aux;
+		}
+
+		/**
+		* devuelve id deralacion componente-equipo
+		* @param int equi_id, comp_id
+		* @return
+		*/
+		function obtenerIdCompoEquipo($equi_id, $comp_id)
+		{
+			log_message('DEBUG','#TRAZA||TRAZ-COMP-PAN|TRAZACOMPS|OBTENERIDCOMPOEQUIPO $equi_id >> '.json_encode($equi_id));
+			log_message('DEBUG','#TRAZA||TRAZ-COMP-PAN|TRAZACOMPS|OBTENERIDCOMPOEQUIPO $comp_id >> '.json_encode($comp_id));
+			$aux = $this->rest->callAPI("GET",REST_PAN."/componente/".$comp_id."/equipo/".$equi_id);
+			$aux =json_decode($aux["data"]);
+			return $aux->respuesta->coeq_id;
+		}
+
+		/**
+		* guarda recepcion de componente
+		* @param array con info de guardado
+		* @return bool true o false resultado del servicio
+		*/
+		function guardaRecibe($data)
+		{
+			$post["_post_traza_componente_equipo_recepcion_batch_req"] = $data;
+			$aaa = json_encode($post);
+			log_message('DEBUG','#TRAZA|TRAZ-COMP-PAN|TRAZACOMPS|GUARDARECIBE $post >> '.json_encode($post));
+			$aux = $this->rest->callAPI("POST",REST_PAN."/_post_traza_componente_equipo_recepcion_batch_req", $post);
+			$aux =json_decode($aux["status"]);
+			return $aux;
+		}
+
+		function guardaEntrega($data){
+
+			$post["_post_traza_componente_equipo_entrega_batch_req"] = $data;
+			$aaa = json_encode($post);
+			log_message('DEBUG','#TRAZA|TRAZ-COMP-PAN|TRAZACOMPS|GUARDARECIBE $post >> '.json_encode($post));
+			$aux = $this->rest->callAPI("POST",REST_PAN."/_post_traza_componente_equipo_entrega_batch_req", $post);
+			$aux =json_decode($aux["status"]);
+			return $aux;
+		}
+
+
+
+
+
+
+
+
+
+
 
     function componentes_List()
     {
@@ -68,29 +199,7 @@ class Trazacomps extends CI_Model {
         }         
     }
 
-    // trae  componentes por ID (recibir)      
-    function getComponentes($data = null)
-    {
-        $userdata  = $this->session->userdata('user_data');
-        $empresaId = $userdata[0]['id_empresa'];
-        $id        = $data['id_equipo'];
-        $this->db->select('componentes.id_componente, componentes.descripcion');
-        $this->db->from('equipos');
-        $this->db->join('componenteequipo', 'equipos.id_equipo = componenteequipo.id_equipo');
-        $this->db->join('componentes', 'componentes.id_componente = componenteequipo.id_componente'); 
-        $this->db->where('componenteequipo.id_empresa', $empresaId);
-        $this->db->where('equipos.estado', 'AC');
-        $this->db->where('equipos.id_equipo', $id);
-        $query = $this->db->get();      
-        if ($query->num_rows()!=0)
-        {               
-            return $query->result_array();
-        }
-        else
-        {
-            return array();
-        }  
-    }
+
 
     // devuelve las estanterias creadas previamente
     function getEstanterias()
@@ -287,43 +396,5 @@ class Trazacomps extends CI_Model {
             return true;
         }    
     }
-        
-    /////// FORMATO DE ARRAY QUE VIENE DE LA VISTA
-        // $data
-        // Dump => array(3) {
-        //   [0] => array(5) {
-        //     ["id_equipo"] => string(3) "119"
-        //     ["id_componente"] => string(2) "54"
-        //     ["id_estanteria"] => string(1) "3"
-        //     ["fila"] => string(1) "8"
-        //     ["observaciones"] => string(0) ""
-        //   }
-        //   [1] => array(5) {
-        //     ["id_equipo"] => string(3) "119"
-        //     ["id_componente"] => string(2) "55"
-        //     ["id_estanteria"] => string(1) "1"
-        //     ["fila"] => string(1) "1"
-        //     ["observaciones"] => string(0) ""
-        //   }
-        //   [2] => array(5) {
-        //     ["id_equipo"] => string(3) "119"
-        //     ["id_componente"] => string(2) "53"
-        //     ["id_estanteria"] => string(1) "2"
-        //     ["fila"] => string(1) "2"
-        //     ["observaciones"] => string(0) ""
-        //   }
-        // }
-        // $info
-        // Dump => array(3) {
-        //   [0] => array(1) {
-        //     ["res_pañol"] => string(4) "hugo"
-        //   }
-        //   [1] => array(1) {
-        //     ["entrega"] => string(4) "pepe"
-        //   }
-        //   [2] => array(1) {
-        //     ["tipo"] => string(9) "recepcion"
-        //   }
-        // }
-	
+
 }	

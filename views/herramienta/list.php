@@ -36,138 +36,106 @@
 <!--_______ FIN TABLA PRINCIPAL DE PANTALLA ______-->
 
 
-
-
-
 <script>
 
+  // extrae datos de la tabla
+  $(".btnEditar").on("click", function(e) {
 
-// extrae datos de la tabla
-$(".btnEditar").on("click", function(e) {
-  $(".modal-header h4").remove();
-  $("#operacion").val("Edit");
-  $(".modal-header").append('<h4 class="modal-title"  id="myModalLabel"><span id="modalAction" class="fa fa-fw fa-pencil text-light-blue"></span> Editar Herramienta </h4>');
-  data = $(this).parents("tr").attr("data-json");
-  datajson = JSON.parse(data);
-  habilitarEdicion();
-  llenarModal(datajson);
-});
-// extrae datos de la tabla
-$(".btnInfo").on("click", function(e) {
-  $(".modal-header h4").remove();
-  $("#operacion").val("Info");
-  $(".modal-header").append('<h4 class="modal-title"  id="myModalLabel"><span id="modalAction" class="fa fa-fw fa-pencil text-light-blue"></span> Info Herramienta </h4>');
-  data = $(this).parents("tr").attr("data-json");
-  datajson = JSON.parse(data);
-  blockEdicion();
-  llenarModal(datajson);
-});
-//cambia encabezado para agregar una herramienta
-$("#btnAdd").on("click", function(e) {
-  $("#operacion").val("Add");
-  $(".modal-header h4").remove();
-  $(".modal-header").append('<h4 class="modal-title"  id="myModalLabel"><span id="modalAction" class="fa fa-fw fa-pencil text-light-blue"></span> Agregar Herramienta </h4>');
-  ///FIXME: LIMPIAR LOS CAMPOS Y SELECTS
-});
-
-// llena modal paa edicio y muestra
-function llenarModal(datajson){
-
-  $('#codigo_edit').val(datajson.codigo);
-  $('#descripcion_edit').val(datajson.descripcion);
-  $('#modelo_edit').val(datajson.modelo);
-  $('#tipo_edit').val(datajson.tipo);
-  $("#marca_id_edit option[value="+ datajson.marca_id +"]").attr("selected",true);
-  $("#pano_id_edit option[value="+ datajson.pano_id +"]").attr("selected",true);
-  //FIXME: REVISAR EL SELECT
-}
-// deshabilita botones, selects e inputs de modal
-function blockEdicion(){
-  $(".habilitar").attr("readonly","readonly");
-  $(".selec_habilitar").attr('disabled', 'disabled');
-}
-// habilita botones, selects e inputs de modal
-function habilitarEdicion(){
-  $('.habilitar').removeAttr("readonly");//
-  $(".selec_habilitar").removeAttr("disabled");
-}
-// Levanta modal prevencion eliminar herramienta
-$(".btnEliminar").on("click", function() {
-  datajson = $(this).parents("tr").attr("data-json");
-  data = JSON.parse(datajson);
-  var herr_id = data.herr_id;
-  // guardo herr_id en modal para usar en funcion eliminar
-  $("#id_herr").val(herr_id);
-  //levanto modal
-  $("#modalaviso").modal('show');
-});
-// Elimina herramienta
-function eliminar(){
-
-  var herr_id = $("#id_herr").val();
-  wo();
-  $.ajax({
-      type: 'POST',
-      data:{herr_id: herr_id},
-      url: "Herramienta/borrarHerramienta",
-      success: function(result) {
-            // if(result == "ok"){
-               wc();
-            //   $("#modalaviso").modal('hide');
-            //   alertify.success("Circuito Eliminado con exito");
-            //   $("#cargar_tabla").load("<?php// echo base_url(); ?>index.php/general/Estructura/Circuito/Listar_Circuitos");
-
-            // }else{
-            //   wc();
-               $("#modalaviso").modal('hide');
-            //   alertify.success("Error al Eliminar Circuito");
-            // }
-      },
-      error: function(result){
-        $("#modalaviso").modal('hide');
-      }
+    $(".modal-header h4").remove();
+    //guardo el tipo de operacion en el modal
+    $("#operacion").val("Edit");
+    //pongo titlo al modal
+    $(".modal-header").append('<h4 class="modal-title"  id="myModalLabel"><span id="modalAction" class="fa fa-fw fa-pencil"></span> Editar Herramienta </h4>');
+    data = $(this).parents("tr").attr("data-json");
+    datajson = JSON.parse(data);
+    habilitarEdicion();
+    llenarModal(datajson);
   });
-}
+  // extrae datos de la tabla
+  $(".btnInfo").on("click", function(e) {
+    $(".modal-header h4").remove();
+    //guardo el tipo de operacion en el modal
+    $("#operacion").val("Info");
+    //pongo titlo al modal
+    $(".modal-header").append('<h4 class="modal-title"  id="myModalLabel"><span id="modalAction" class="fa fa-fw fa-pencil"></span> Info Herramienta </h4>');
+    data = $(this).parents("tr").attr("data-json");
+    datajson = JSON.parse(data);
+    blockEdicion();
+    llenarModal(datajson);
+  });
+  //cambia encabezado para agregar una herramienta
+  $("#btnAdd").on("click", function(e) {
+    $("#operacion").val("Add");
+    $(".modal-header h4").remove();
+    $(".modal-header").append('<h4 class="modal-title"  id="myModalLabel"><span id="modalAction" class="fa fa-fw fa-pencil text-light-blue"></span> Agregar Herramienta </h4>');
+    ///FIXME: LIMPIAR LOS CAMPOS Y SELECTS
+  });
 
-function guardar(){
-  
-    //FIXME: HACER VALIDACION DE CAMPOS
+  // llena modal paa edicio y muestra
+  function llenarModal(datajson){
 
-    var operacion = $("#operacion").val();
-    var recurso = "";
-    if (operacion == "Edit") {
+    $('#herr_id').val(datajson.herr_id);
+    //$('#pano_id').val(datajson.pano_id);
+    $('#codigo_edit').val(datajson.codigo);
+    $('#descripcion_edit').val(datajson.descripcion);
+    $('#modelo_edit').val(datajson.modelo);
+    $('#tipo_edit').val(datajson.tipo);
+    $('#marca_id_edit option[value="'+ datajson.marca_id +'"]').attr("selected",true);
+    $('#pano_id_edit option[value="'+ datajson.pano_id +'"]').attr("selected",true);
+  }
+  // deshabilita botones, selects e inputs de modal
+  function blockEdicion(){
+    $(".habilitar").attr("readonly","readonly");
+    //$(".selec_habilitar").attr('disabled', 'disabled');
+  }
+  // habilita botones, selects e inputs de modal
+  function habilitarEdicion(){
+    $('.habilitar').removeAttr("readonly");//
+    //$(".selec_habilitar").removeAttr("disabled");
+  }
+  // Levanta modal prevencion eliminar herramienta
+  $(".btnEliminar").on("click", function() {
+    $(".modal-header h4").remove();
+    $(".modal-header").append('<h4 class="modal-title"  id="myModalLabel"><span id="modalAction" class="fa fa-fw fa-times text-light-blue"></span> Eliminar Herramienta </h4>');
+    datajson = $(this).parents("tr").attr("data-json");
+    data = JSON.parse(datajson);
+    var herr_id = data.herr_id;
+    // guardo herr_id en modal para usar en funcion eliminar
+    $("#id_herr").val(herr_id);
+    //levanto modal
+    $("#modalaviso").modal('show');
+  });
+  // Elimina herramienta
+  function eliminar(){
 
-      alert("editar");
-      recurso = 'index.php/Herramienta/editar';
-    } else {
-
-      alert("agregar");
-      recurso = 'index.php/Herramienta/guardar';
-    }
-    debugger;
-    var herramientas = new FormData($("form#frm_herramienta")[0]);
-    console.table(herramientas);
-    herramientas = formToObject(herramientas);
-
-
+    var herr_id = $("#id_herr").val();
+    wo();
     $.ajax({
         type: 'POST',
-        data:{ herramientas },
-        url: recurso,
+        data:{herr_id: herr_id},
+        url: 'index.php/<?php echo PAN ?>Herramienta/borrarHerramienta',
         success: function(result) {
-              // if(result == ''){
+              // if(result == "ok"){
+                wc();
+              //   $("#modalaviso").modal('hide');
+              //   alertify.success("Circuito Eliminado con exito");
+              //   $("#cargar_tabla").load("<?php// echo base_url(); ?>index.php/general/Estructura/Circuito/Listar_Circuitos");
 
+              // }else{
+              //   wc();
+                $("#modalaviso").modal('hide');
+              //   alertify.success("Error al Eliminar Circuito");
               // }
         },
         error: function(result){
-
-        },
-        complete: function(){
-
+          wc();
+          $("#modalaviso").modal('hide');
+          alertify.error('Error en eliminado de Herramientas...');
         }
     });
+  }
 
-}
+
 </script>
 
 

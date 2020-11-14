@@ -35,10 +35,9 @@ class Herramientas extends CI_Model
 		* @param
 		* @return array con pañoles
 		*/
-		function obtenerPanoles(){
+		function obtenerPanoles($esta_id){
 
-			$empr_id = empresa();
-			$aux = $this->rest->callAPI("GET",REST_PAN."/panoles/empresa/".$empr_id);
+			$aux = $this->rest->callAPI("GET",REST_PAN."/panol/establecimiento/".$esta_id);
 			$aux =json_decode($aux["data"]);
 			return $aux->panoles->panol;
 		}
@@ -57,6 +56,20 @@ class Herramientas extends CI_Model
 		}
 
 		/**
+		* devuelve establecimientos por empr_id
+		* @param
+		* @return array con establecimientosde una empresa
+		*/
+		function obtenerEstablecimientos()
+		{
+			$empr_id = empresa();
+			$aux = $this->rest->callAPI("GET",REST_PAN."/establecimientos/empresa/".$empr_id);
+			$aux =json_decode($aux["data"]);
+			return $aux->establecimientos->establecimiento;
+
+		}
+
+		/**
 		* Borra herramienta
 		* @param	int $herr_id
 		* @return bool true o false resultado del servicio
@@ -70,52 +83,32 @@ class Herramientas extends CI_Model
 			return $aux;
     }
 
+		/**
+		* guarda herramienta en pañol
+		* @param array con info de herramienta
+		* @return bool resultado de servicio de guardado
+		*/
+		function guardar($herram)
+		{
+				$post['_post_herramientas'] = $herram;
+				log_message('DEBUG','#TRAZA|TRAZA-COMP-PAN|HERRAMIENTAS|GUARDAR  $post: >> '.json_encode($post));
+				$aux = $this->rest->callAPI("POST",REST_PAN."/herramientas", $post);
+				$aux = json_decode($aux["status"]);
+				return $aux;
+		}
 
-
-
-
-		function agregar_herramientas($data)
-    {
-        $userdata           = $this->session->userdata('user_data');
-        $empresaId          = $userdata[0]['id_empresa'];
-        $data['id_empresa'] = $empresaId;
-        $query              = $this->db->insert("herramientas",$data);
-        return $query;
-    }
-
-    // edita herramienta
-    function update_editar($data, $id)
-    {
-        $this->db->where('herrId', $id);
-        $query = $this->db->update("herramientas",$data);
-        return $query;
-    }
-
-
-
-
-
-
-
-
-
-
-		/////////////////////////////////////////////////////////
-    // revisa si existe la herramienta
-    function existeHerramienta($codigoH)
-    {
-        $query = $this->db->get_where('herramientas', array('herrcodigo' => $codigoH));
-        $count = $query->num_rows(); //counting result from query 
-        if ($count === 0)
-        {
-            return 0;
-        }
-        else
-        {
-            return 1;
-        }
-    }
-
-
+		/**
+		* deita edicion de herramienta
+		* @param array con info
+		* @return bool respuesta de servicio
+		*/
+		function editar($herram)
+		{
+			$post['_put_herramientas'] = $herram;
+			log_message('DEBUG','#TRAZA|TRAZ-COMP-PAN|HERRAMIENTAS|EDITAR $post: >> '.json_encode($post));
+			$aux = $this->rest->callAPI("PUT",REST_PAN."/herramientas", $post);
+			$aux =json_decode($aux["status"]);
+			return $aux;
+		}
 
 }

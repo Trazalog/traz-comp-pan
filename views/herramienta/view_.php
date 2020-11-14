@@ -21,7 +21,7 @@
 <div class="box box-primary animated bounceInDown" id="boxDatos" hidden>
     <div class="box-header with-border">
         <div class="box-tittle">
-            <h5>Detalle Herramienta</h5>
+            <h4>Detalle Herramienta</h4>
         </div>
         <div class="box-tools pull-right border ">
             <button type="button" id="btnclose" title="cerrar" class="btn btn-box-tool" data-widget="remove"
@@ -34,13 +34,45 @@
 
     <div class="box-body">
 
-        <form class="formCircuitos" id="formCircuitos">
+        <form class="formHerramientas" id="formHerramientas">
+
+            <!--Establecimientos-->
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-group">
+              <label for="esta_id">Establecimientos<strong style="color: #dd4b39">*</strong>:</label>
+              <select type="text" id="esta_id" name="" class="form-control selec_habilitar" >
+                  <option value="" disabled selected>-Seleccione opcion-</option>
+                  <?php
+                      foreach ($establecimientos as $establec) {
+                          echo '<option  value="'.$establec->esta_id.'">'.$establec->nombre.'</option>';
+                      }
+                  ?>
+              </select>
+              </div>
+            </div>
+            <!--________________-->
+
+            <!--Pañol-->
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                <label for="pano_id">Pañol<strong style="color: #dd4b39">*</strong>:</label>
+                <select type="text" id="pano_id" name="pano_id" class="form-control selec_habilitar" >
+                    <option value="" disabled selected>-Seleccione opcion-</option>
+                    <?php
+                        foreach ($panoles as $panol) {
+                            echo '<option  value="'.$panol->pano_id.'">'.$panol->descripcion.'</option>';
+                        }
+                    ?>
+                </select>
+                </div>
+            </div>
+            <!--________________-->
 
             <!--Codigo-->
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <div class="form-group">
                   <label for="codigo">Codigo <strong style="color: #dd4b39">*</strong>:</label>
-                  <input type="text" id="codigo" name="codigoe" class="form-control habilitar" placeholder="Ingrese Codigo...">
+                  <input type="text" id="codigo" name="codigo" class="form-control" placeholder="Ingrese Codigo...">
                 </div>
             </div>
             <!--________________-->
@@ -49,7 +81,7 @@
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <div class="form-group">
                   <label for="descripcion">Descripción <strong style="color: #dd4b39">*</strong>:</label>
-                  <input type="text" id="descripcion" name="descripcione" class="form-control habilitar" placeholder="Ingrese Descripcion...">
+                  <input type="text" id="descripcion" name="descripcion" class="form-control" placeholder="Ingrese Descripcion...">
                 </div>
             </div>
             <!--________________-->
@@ -58,7 +90,16 @@
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <div class="form-group">
                 <label for="modelo">Modelo <strong style="color: #dd4b39">*</strong>:</label>
-                <input type="text" id="modelo" name="modeloe" class="form-control habilitar">
+                <input type="text" id="modelo" name="modelo" class="form-control">
+                </div>
+            </div>
+            <!--________________-->
+
+            <!--Tipo-->
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                <label for="tipo">Tipo <strong style="color: #dd4b39">*</strong>:</label>
+                <input type="text" id="tipo" name="tipo" class="form-control">
                 </div>
             </div>
             <!--________________-->
@@ -67,7 +108,7 @@
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <div class="form-group">
                 <label for="marca">Marca <strong style="color: #dd4b39">*</strong>:</label>
-                  <select type="text" id="marca" name="marcae" class="form-control selec_habilitar" >
+                  <select type="text" id="marca" name="marca" class="form-control selec_habilitar" >
                     <option value="" disabled selected>-Seleccione opcion-</option>
                     <?php
                         foreach ($marcas as $mar) {
@@ -79,27 +120,13 @@
             </div>
             <!--________________-->
 
-            <!--Pañol-->
-            <div class="col-md-6 col-sm-6 col-xs-12">
-                <div class="form-group">
-                <label for="pano_id">Pañol<strong style="color: #dd4b39">*</strong>:</label>
-                <select type="text" id="pano_id" name="pano_ide" class="form-control selec_habilitar" >
-                    <option value="" disabled selected>-Seleccione opcion-</option>
-                    <?php
-                        foreach ($panoles as $panol) {
-                            echo '<option  value="'.$panol->pano_id.'">'.$panol->descripcion.'</option>';
-                        }
-                    ?>
-                </select>
-                </div>
-            </div>
-            <!--________________-->
+
         </form>
         </div>
         <!--_________________ GUARDAR_________________-->
         <div class="modal-footer">
 					<div class="form-group text-right">
-          <button type="button" class="btn btn-primary" onclick="guardar()" >Guardar</button>
+          <button type="button" class="btn btn-primary" onclick="guardar('nueva')" >Guardar</button>
 				</div>                
         <!--__________________________________-->
 
@@ -141,100 +168,104 @@
 
             <div class="modal-header bg-blue">
                 <button type="button" class="close close_modal_edit" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true" style="color:white;">&times;</span>
                 </button>
             </div>
 
             <div class="modal-body ">
-              <div class="form-horizontal">
-                <div class="row">
-                  <form class="frm_circuito_edit" id="frm_circuito_edit">
+              <form class="formEdicion" id="formEdicion">
+                <div class="form-horizontal">
+                  <div class="row">
+                    <form class="frm_circuito_edit" id="frm_circuito_edit">
 
-                    <div class="col-sm-6">
-                      <!--_____________ CODIGO _____________-->
-                        <div class="form-group">
-                          <label for="codigo_edit" class="col-sm-4 control-label">Código:</label>
-                          <div class="col-sm-8">
-                            <input type="text" class="form-control habilitar" name="codigo" id="codigo_edit">	
-                          </div>
-                        </div>
-                      <!--___________________________-->
+                    <input type="text" class="form-control habilitar hidden" name="herr_id" id="herr_id">
 
-                      <!--_____________ DESCRIPCION _____________-->
+                      <div class="col-sm-6">
+                        <!--_____________ CODIGO _____________-->
                           <div class="form-group">
-                            <label for="descripcion_edit" class="col-sm-4 control-label">Descripcion:</label>
+                            <label for="codigo_edit" class="col-sm-4 control-label">Código:</label>
                             <div class="col-sm-8">
-                              <input type="text" class="form-control habilitar" name="descripcion" id="descripcion_edit">
+                              <input type="text" class="form-control habilitar" name="codigo" id="codigo_edit">
                             </div>
-                        </div>
-                      <!--__________________________-->
+                          </div>
+                        <!--___________________________-->
 
-                      <!--_____________ MODELO _____________-->
+                        <!--_____________ DESCRIPCION _____________-->
+                            <div class="form-group">
+                              <label for="descripcion_edit" class="col-sm-4 control-label">Descripcion:</label>
+                              <div class="col-sm-8">
+                                <input type="text" class="form-control habilitar" name="descripcion" id="descripcion_edit">
+                              </div>
+                          </div>
+                        <!--__________________________-->
+
+                        <!--_____________ MODELO _____________-->
+                            <div class="form-group">
+                              <label for="modelo_edit" class="col-sm-4 control-label">Modelo:</label>
+                              <div class="col-sm-8">
+                                <input type="text" class="form-control habilitar" name="modelo" id="modelo_edit">
+                              </div>
+                          </div>
+                        <!--__________________________-->
+
+                      </div>
+
+                      <div class="col-sm-6">
+
+                        <!--_____________ MODELO _____________-->
                           <div class="form-group">
-                            <label for="modelo_edit" class="col-sm-4 control-label">Modelo:</label>
+                            <label for="tipo_edit" class="col-sm-4 control-label">Tipo:</label>
                             <div class="col-sm-8">
-                              <input type="text" class="form-control habilitar" name="modelo" id="modelo_edit">
+                              <input type="text" class="form-control habilitar" name="tipo" id="tipo_edit">
                             </div>
-                        </div>
-                      <!--__________________________-->
-
-                    </div>
-
-                    <div class="col-sm-6">
-
-                      <!--_____________ MODELO _____________-->
-                        <div class="form-group">
-                          <label for="tipo_edit" class="col-sm-4 control-label">Tipo:</label>
-                          <div class="col-sm-8">
-                            <input type="text" class="form-control habilitar" name="tipo" id="tipo_edit">
                           </div>
-                        </div>
-                      <!--___________________________-->
+                        <!--___________________________-->
 
 
-                      <!--_____________ MARCA _____________-->
-                        <div class="form-group">
-                          <label for="marca_id_edit" class="col-sm-4 control-label">Marca:</label>
-                          <div class="col-sm-8">
-                            <!-- <input type="text" class="form-control habilitar" id="vehiculo_edit">  -->
-                            <select class="form-control select2 select2-hidden-accesible selec_habilitar" name="marca_id" id="marca_id_edit">
-                              <option value="" disabled selected>-Seleccione opcion-</option>	
-                              <?php
-                                foreach ($marcas as $mar) {
-                                  echo '<option  value="'.$mar->tabl_id.'">'.$mar->valor.'</option>';
-                                }
-                              ?>
-                            </select>
+                        <!--_____________ MARCA _____________-->
+                          <div class="form-group">
+                            <label for="marca_id_edit" class="col-sm-4 control-label">Marca:</label>
+                            <div class="col-sm-8">
+                              <!-- <input type="text" class="form-control habilitar" id="vehiculo_edit">  -->
+                              <select class="form-control select2 select2-hidden-accesible habilitar" name="marca" id="marca_id_edit">
+                                <option value="" disabled selected>-Seleccione opcion-</option>	
+                                <?php
+                                  foreach ($marcas as $mar) {
+                                    echo '<option  value="'.$mar->tabl_id.'">'.$mar->valor.'</option>';
+                                  }
+                                ?>
+                              </select>
+                            </div>
                           </div>
-                        </div>
-                      <!--__________________________-->
+                        <!--__________________________-->
 
-                      <!--_____________ PAÑOL _____________-->
-                        <div class="form-group">
-                          <label for="pano_id_edit" class="col-sm-4 control-label">Pañol:</label>
-                          <div class="col-sm-8">
-                            <select class="form-control select2 select2-hidden-accesible selec_habilitar" name="pano_id" id="pano_id_edit">
-                              <option value="" disabled selected>-Seleccione opcion-</option>
-                              <?php
-                              foreach ($panoles as $panol) {
-                                echo '<option  value="'.$panol->pano_id.'">'.$panol->descripcion.'</option>';
-                              }
-                              ?>
-                            </select>
-                          </div>	
-                        </div>
-                      <!--__________________________-->
-                    </div>
+                        <!--_____________ PAÑOL _____________-->
+                          <!-- <div class="form-group">
+                            <label for="pano_id_edit" class="col-sm-4 control-label">Pañol:</label>
+                            <div class="col-sm-8">
+                              <select class="form-control select2 select2-hidden-accesible selec_habilitar" name="" id="pano_id_edit">
+                                <option value="" disabled selected>-Seleccione opcion-</option>
+                                <?php
+                                // foreach ($panoles as $panol) {
+                                //   echo '<option  value="'.$panol->pano_id.'">'.$panol->descripcion.'</option>';
+                                // }
+                                ?>
+                              </select>
+                            </div>
+                          </div> -->
+                        <!--__________________________-->
+                      </div>
 
-                  </form>
+                    </form>
+                  </div>
                 </div>
-              </div>
+              </form>
             </div>
 
             <div class="modal-footer">
 
                 <div class="form-group text-right">
-                    <button type="" class="btn btn-primary" data-dismiss="modal" id="btnsave_edit">Guardar</button>
+                    <button type="" class="btn btn-primary habilitar" data-dismiss="modal" id="btnsave_edit" onclick="guardar('editar')">Guardar</button>
                     <button type="" class="btn btn-default cerrarModalEdit" id="" data-dismiss="modal">Cerrar</button>
                 </div>
 
@@ -250,7 +281,7 @@
 
 <script>
   // carga tabla genaral de circuitos
-  $("#cargar_tabla").load("<?php echo base_url(); ?>index.php/Herramienta/listarHerramientas");
+  $("#cargar_tabla").load("<?php echo base_url(PAN); ?>/Herramienta/listarHerramientas");
 
   // muestra box de datos al dar click en boton agregar
   $("#botonAgregar").on("click", function() {
@@ -270,9 +301,75 @@
       $("#formDatos")[0].reset();
   });
 
+  // al cambiar de establecimiento llena select con pañoles
+  $("#esta_id").change(function(){
 
+      wo();
+      //limpia las opciones de pañol
+      $('#pano_id').empty();
 
+      var esta_id = $(this).val();
 
+      $.ajax({
+          type: 'POST',
+          data:{esta_id:esta_id },
+          url: 'index.php/<?php echo PAN ?>Herramienta/obtenerPanoles',
+          success: function(result) {
 
+                $('#pano_id').empty();
+                panol = JSON.parse(result);
+                var html = "";
+                html = html + '<option value="" disabled selected>-Seleccione Pañol-</option>';
+                $.each(panol, function(i,h){
+                  html = html + "<option data-json= '" + JSON.stringify(h) + "'value='" + h.pano_id + "'>" + h.descripcion + "</option>";
+                });
+                $('#pano_id').append(html);
+                wc();
+          },
+          error: function(result){
+            alert('error');
+          }
+      });
+  });
+
+  // Da de alta una herramienta nueva en pañol
+  function guardar(operacion){
+    wo();
+    var recurso = "";
+    if (operacion == "editar") {
+
+      var form = $('#formEdicion')[0];
+      var datos = new FormData(form);
+      var datos = formToObject(datos);
+      recurso = 'index.php/<?php echo PAN ?>Herramienta/editar';
+    } else {
+
+      var form = $('#formHerramientas')[0];
+      var datos = new FormData(form);
+      var datos = formToObject(datos);
+      recurso = 'index.php/<?php echo PAN ?>Herramienta/guardar';
+    }
+
+    $.ajax({
+        type: 'POST',
+        data:{ datos },
+        //dataType: 'JSON',
+        url: recurso,
+        success: function(result) {
+
+          $("#cargar_tabla").load("<?php echo base_url(PAN); ?>Herramienta/listarHerramientas");
+          wc();
+          $("#boxDatos").hide(500);
+          $("#frm_salida")[0].reset();
+          $("#botonAgregar").removeAttr("disabled");
+          alertify.success("Vale de Salida Agregado con Exito");
+        },
+        error: function(result){
+          wc();
+          alertify.error("Error agregando Vale de Salida");
+        }
+    });
+
+  }
 
 </script>

@@ -16,8 +16,33 @@ class Unload extends CI_Controller {
 		*/
 		public function index()
 		{
-				$data['panoles'] = $this->Unloads->obtenerPanoles();
+				$data['establecimientos'] = $this->Unloads->obtenerEstablecimientos();
 				$this->load->view('unloads/view_',$data);
+		}
+
+		/**
+		* devuelve pañoles propios de una empresa
+		* @param
+		* @return array con pañoles
+		*/
+		public function obtenerPanoles(){
+			log_message('INFO','#TRAZA|TRAZ-COMP-PANOL|HERRAMIENTAS|OBTENERPANOLES >> ');
+			$resp = $this->Unloads->obtenerPanoles($this->input->post('esta_id'));
+			echo json_encode($resp);
+		}
+
+
+		/**
+		* Obtiene herramientas por pañol
+		* @param int pano_id
+		* @return array herramientas por pañol
+		*/
+		function obtenerHerramientasPanol()
+		{
+			log_message('INFO','#TRAZA|| >> ');
+			$pano_id = $this->input->post('pano_id');
+			$resp = $this->Unloads->obtenerHerramientasPanol($pano_id);
+			echo json_encode($resp);
 		}
 
 		/**
@@ -49,6 +74,12 @@ class Unload extends CI_Controller {
 			// guarda cabecera salida herramientas
 			$enpa_id = $this->Unloads->guardar($cabecera);
 
+			if ( !$enpa_id ) {
+				log_message('ERROR','#TRAZA|TRAZ-COMP-PAN|UNLOAD|GUARDAR >> ERROR: "NO GUARDO CABECERA ENTRADA DE HERRAMIENTAS ');
+				echo json_encode(false);
+				return;
+			}
+
 			// guarda detalle de salida de herramientas
 			$detalle = array();
 			$tmp = array();
@@ -58,7 +89,12 @@ class Unload extends CI_Controller {
 				array_push($detalle, $tmp);
 			}
 			$data['_postpanol_entrada_herramientas'] = $detalle;
-			$this->Unloads->guardarDetalle($data );
+
+			if ( !($this->Unloads->guardarDetalle($data )) ) {
+				log_message('ERROR','#TRAZA|TRAZ-COMP-PAN|UNLOAD|GUARDAR >> ERROR: "NO GUARDO DETALLE ENTRADA DE HERRAMIENTAS ');
+				echo json_encode(false);
+				return;
+			}
 
 			// cambia el estado de las herramientas
 			$est = array();
@@ -72,10 +108,7 @@ class Unload extends CI_Controller {
 			$herramEst['_put_herramientas_estado'] = $est;
 			$this->Unloads->setEstadoHerramientas($herramEst);
 
-
-			return;
-
-
+			echo json_encode(true);
 		}
 
 

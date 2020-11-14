@@ -13,6 +13,7 @@
               <tr> 
                 <!-- <th>Acciones</th> -->
                 <th>Comprobante</th>
+                <th>Fecha</th>
                 <th>Código</th>
                 <th>Marca</th>
                 <th>Destino</th>
@@ -26,8 +27,8 @@
                 	foreach($list as $a)
       		        {
                     echo '<tr>';
-                    //echo '<td></td>';
                     echo '<td>'.$a->comprobante.'</td>';
+                    echo '<td>'.$a->fec_alta.'</td>';
                     echo '<td>'.$a->codigo.'</td>';
                     echo '<td>'.$a->marca.'</td>';
                     echo '<td>'.$a->destino.'</td>';
@@ -45,24 +46,7 @@
   </div><!-- /.row -->
 </section><!-- /.content -->
 
-<!-- Resetea Nº de orden al recargar la pagina -->
-<script>
-//  $('#cargOrden').click( function cargarVista(){
-//     WaitingOpen();
-//     $('#content').empty();
-//     $("#content").load("<?php //echo base_url(); ?>index.php/Order/cargarValeSal/<?php //echo $permission; ?>");
-//     WaitingClose();
-  });
-</script>
-<!-- / Resetea Nº de orden al recargar la pagina -->
 
 <script>
-$(function () {
-  // Datatables
-  $('#articles').DataTable({
-    "aLengthMenu": [ 10, 25, 50, 100 ],
-    "order": [[0, "asc"]],
-  });
 
-});    
 </script>

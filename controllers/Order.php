@@ -25,8 +25,19 @@ class Order extends CI_Controller {
 		*/
     public function index($permission = null)
     {
-				$data['panoles'] = $this->Orders->obtenerPanoles();
+				$data['establecimientos'] = $this->Orders->obtenerEstablecimientos();
         $this->load->view('orders/view_',$data);
+		}
+
+		/**
+		* devuelve pañoles propios de una empresa
+		* @param
+		* @return array con pañoles
+		*/
+		public function obtenerPanoles(){
+			log_message('INFO','#TRAZA|TRAZ-COMP-PANOL|HERRAMIENTAS|OBTENERPANOLES >> ');
+			$resp = $this->Orders->obtenerPanoles($this->input->post('esta_id'));
+			echo json_encode($resp);
 		}
 
 		/**
@@ -35,14 +46,12 @@ class Order extends CI_Controller {
 		* @return view listado salidas
 		*/
 		function listarSalidas()
-		{     
+		{
 			log_message('INFO','#TRAZA|| >> ');
 			$data["list"] = $this->Orders->listarSalidas();
-     //$data['puntos_criticos'] = $this->Circuitos->obtener_Punto_Critico();  
      $this->load->view('orders/list',$data);
 			
 		}
-
 
 		/**
 		* Obtiene herramientas por pañol
@@ -57,7 +66,6 @@ class Order extends CI_Controller {
 			echo json_encode($resp);
 		}
 
-
 		/**
 		* Guarda vale de salida de herramientas de un pañol
 		* @param
@@ -68,10 +76,16 @@ class Order extends CI_Controller {
 			$cabecera = $this->input->post('datos');
 			$cabecera['empr_id'] = empresa();
 			$herram = json_decode($this->input->post('tools'));
-			log_message('DEBUG','#TRAZA|TRAZ-COMP-PAN|ORDER|GUARDAR post >> '.json_encode($this->input->post()));
+			log_message('DEBUG','#TRAZA|TRAZ-COMP-PAN|ORDER|GUARDAR $herram: >> '.json_encode($this->input->post($herram)));
 
 			// guarda cabecera salida herramientas
 			$sapa_id = $this->Orders->guardar($cabecera);
+
+			if ( !$sapa_id ) {
+				log_message('ERROR','#TRAZA|TRAZ-COMP-PAN|ORDER|GUARDAR >> ERROR: "NO GUARDO CABECERA SALIDA DE HERRAMIENTAS ');
+				echo json_encode(false);
+				return;
+			}
 
 			// guarda detalle de salida de herramientas
 			$detalle = array();
@@ -82,7 +96,12 @@ class Order extends CI_Controller {
 				array_push($detalle, $tmp);
 			}
 			$data['_postpanol_salida_herramientas'] = $detalle;
-			$this->Orders->guardarDetalle($data );
+
+			if ( !($this->Orders->guardarDetalle($data)) ) {
+				log_message('ERROR','#TRAZA|TRAZ-COMP-PAN|ORDER|GUARDAR >> ERROR: "NO GUARDO DETALLE SALIDA DE HERRAMIENTAS ');
+				echo json_encode(false);
+				return;
+			}
 
 			// cambia el estado de las herramientas
 			$est = array();
@@ -97,9 +116,7 @@ class Order extends CI_Controller {
 			$this->Orders->setEstadoHerramientas($herramEst);
 
 
-			return;
-
-
+			echo json_encode(true);
 		}
 
 
