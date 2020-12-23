@@ -93,8 +93,8 @@ class Herramientas extends CI_Model
 				$post['_post_herramientas'] = $herram;
 				log_message('DEBUG','#TRAZA|TRAZA-COMP-PAN|HERRAMIENTAS|GUARDAR  $post: >> '.json_encode($post));
 				$aux = $this->rest->callAPI("POST",REST_PAN."/herramientas", $post);
-				$aux = json_decode($aux["status"]);
-				return $aux;
+				$aux = json_decode($aux["data"]);
+				return $aux->respuesta->herr_id;
 		}
 
 		/**

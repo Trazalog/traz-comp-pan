@@ -40,8 +40,8 @@
             <div class="col-md-6 col-sm-6 col-xs-12">
               <div class="form-group">
               <label for="esta_id">Establecimientos<strong style="color: #dd4b39">*</strong>:</label>
-              <select type="text" id="esta_id" name="" class="form-control selec_habilitar" >
-                  <option value="" disabled selected>-Seleccione opcion-</option>
+              <select type="text" id="esta_id" name="" class="form-control selec_habilitar requerido" >
+                  <option value="-1" disabled selected>-Seleccione opcion-</option>
                   <?php
                       foreach ($establecimientos as $establec) {
                           echo '<option  value="'.$establec->esta_id.'">'.$establec->nombre.'</option>';
@@ -56,8 +56,8 @@
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <div class="form-group">
                 <label for="pano_id">Pañol<strong style="color: #dd4b39">*</strong>:</label>
-                <select type="text" id="pano_id" name="pano_id" class="form-control selec_habilitar" >
-                    <option value="" disabled selected>-Seleccione opcion-</option>
+                <select type="text" id="pano_id" name="pano_id" class="form-control selec_habilitar requerido" >
+                    <option value="-1" disabled selected>-Seleccione opcion-</option>
                     <?php
                         foreach ($panoles as $panol) {
                             echo '<option  value="'.$panol->pano_id.'">'.$panol->descripcion.'</option>';
@@ -72,7 +72,7 @@
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <div class="form-group">
                   <label for="codigo">Codigo <strong style="color: #dd4b39">*</strong>:</label>
-                  <input type="text" id="codigo" name="codigo" class="form-control" placeholder="Ingrese Codigo...">
+                  <input type="text" id="codigo" name="codigo" class="form-control requerido" placeholder="Ingrese Codigo...">
                 </div>
             </div>
             <!--________________-->
@@ -81,7 +81,7 @@
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <div class="form-group">
                   <label for="descripcion">Descripción <strong style="color: #dd4b39">*</strong>:</label>
-                  <input type="text" id="descripcion" name="descripcion" class="form-control" placeholder="Ingrese Descripcion...">
+                  <input type="text" id="descripcion" name="descripcion" class="form-control requerido" placeholder="Ingrese Descripcion...">
                 </div>
             </div>
             <!--________________-->
@@ -90,7 +90,7 @@
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <div class="form-group">
                 <label for="modelo">Modelo <strong style="color: #dd4b39">*</strong>:</label>
-                <input type="text" id="modelo" name="modelo" class="form-control">
+                <input type="text" id="modelo" name="modelo" class="form-control requerido">
                 </div>
             </div>
             <!--________________-->
@@ -99,7 +99,7 @@
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <div class="form-group">
                 <label for="tipo">Tipo <strong style="color: #dd4b39">*</strong>:</label>
-                <input type="text" id="tipo" name="tipo" class="form-control">
+                <input type="text" id="tipo" name="tipo" class="form-control requerido">
                 </div>
             </div>
             <!--________________-->
@@ -108,8 +108,8 @@
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <div class="form-group">
                 <label for="marca">Marca <strong style="color: #dd4b39">*</strong>:</label>
-                  <select type="text" id="marca" name="marca" class="form-control selec_habilitar" >
-                    <option value="" disabled selected>-Seleccione opcion-</option>
+                  <select type="text" id="marca" name="marca" class="form-control selec_habilitar requerido" >
+                    <option value="-1" disabled selected>-Seleccione opcion-</option>
                     <?php
                         foreach ($marcas as $mar) {
                             echo '<option  value="'.$mar->tabl_id.'">'.$mar->valor.'</option>';
@@ -185,7 +185,7 @@
                           <div class="form-group">
                             <label for="codigo_edit" class="col-sm-4 control-label">Código:</label>
                             <div class="col-sm-8">
-                              <input type="text" class="form-control habilitar" name="codigo" id="codigo_edit">
+                              <input type="text" class="form-control habilitar requerido" name="codigo" id="codigo_edit">
                             </div>
                           </div>
                         <!--___________________________-->
@@ -194,7 +194,7 @@
                             <div class="form-group">
                               <label for="descripcion_edit" class="col-sm-4 control-label">Descripcion:</label>
                               <div class="col-sm-8">
-                                <input type="text" class="form-control habilitar" name="descripcion" id="descripcion_edit">
+                                <input type="text" class="form-control habilitar requerido" name="descripcion" id="descripcion_edit">
                               </div>
                           </div>
                         <!--__________________________-->
@@ -203,7 +203,7 @@
                             <div class="form-group">
                               <label for="modelo_edit" class="col-sm-4 control-label">Modelo:</label>
                               <div class="col-sm-8">
-                                <input type="text" class="form-control habilitar" name="modelo" id="modelo_edit">
+                                <input type="text" class="form-control habilitar requerido" name="modelo" id="modelo_edit">
                               </div>
                           </div>
                         <!--__________________________-->
@@ -216,7 +216,7 @@
                           <div class="form-group">
                             <label for="tipo_edit" class="col-sm-4 control-label">Tipo:</label>
                             <div class="col-sm-8">
-                              <input type="text" class="form-control habilitar" name="tipo" id="tipo_edit">
+                              <input type="text" class="form-control habilitar requerido" name="tipo" id="tipo_edit">
                             </div>
                           </div>
                         <!--___________________________-->
@@ -227,7 +227,7 @@
                             <label for="marca_id_edit" class="col-sm-4 control-label">Marca:</label>
                             <div class="col-sm-8">
                               <!-- <input type="text" class="form-control habilitar" id="vehiculo_edit">  -->
-                              <select class="form-control select2 select2-hidden-accesible habilitar" name="marca" id="marca_id_edit">
+                              <select class="form-control select2 select2-hidden-accesible habilitar requerido" name="marca" id="marca_id_edit">
                                 <option value="" disabled selected>-Seleccione opcion-</option>	
                                 <?php
                                   foreach ($marcas as $mar) {
@@ -291,7 +291,7 @@
       $("#boxDatos").focus();
       $("#boxDatos").show();
   });
-	
+
 	// muestra box de datos al dar click en X
 	$("#btnclose").on("click", function() {
 
@@ -307,7 +307,6 @@
       wo();
       //limpia las opciones de pañol
       $('#pano_id').empty();
-
       var esta_id = $(this).val();
 
       $.ajax({
@@ -316,40 +315,84 @@
           url: 'index.php/<?php echo PAN ?>Herramienta/obtenerPanoles',
           success: function(result) {
 
-                $('#pano_id').empty();
-                panol = JSON.parse(result);
-                var html = "";
-                html = html + '<option value="" disabled selected>-Seleccione Pañol-</option>';
-                $.each(panol, function(i,h){
-                  html = html + "<option data-json= '" + JSON.stringify(h) + "'value='" + h.pano_id + "'>" + h.descripcion + "</option>";
-                });
-                $('#pano_id').append(html);
-                wc();
+            $('#pano_id').empty();
+            panol = JSON.parse(result);
+            var html = "";
+
+            if (panol == null) {
+
+              html = html + '<option value="-1" disabled selected>- El Establecimiento no tiene Pañol Asociado -</option>';
+            }else{
+
+              html = html + '<option value="-1" disabled selected>-Seleccione Pañol-</option>';
+              $.each(panol, function(i,h){
+                html = html + "<option data-json= '" + JSON.stringify(h) + "'value='" + h.pano_id + "'>" + h.descripcion + "</option>";
+              });
+            }
+            $('#pano_id').append(html);
+            wc();
           },
           error: function(result){
-            alert('error');
+
+                wc();
+                alert('No hay Pañoles asociados a este Establecimiento...');
           }
       });
   });
 
+  // valida campos obligatorios
+  function validarCampos(form){
+
+    var mensaje = "";
+    var ban = true;
+    $('#' + form).find('.requerido').each(function() {
+      if (this.value == "" || this.value=="-1") {
+          ban = ban && false;
+          return;
+      }
+    });
+    if (!ban){
+        if(!alertify.errorAlert){
+          alertify.dialog('errorAlert',function factory(){
+            return{
+                    build:function(){
+                        var errorHeader = '<span class="fa fa-times-circle fa-2x" '
+                        +    'style="vertical-align:middle;color:#e10000;">'
+                        + '</span>Error...!!';
+                        this.setHeader(errorHeader);
+                    }
+                };
+            },true,'alert');
+        }
+        alertify.errorAlert("Por favor complete los campos Obligatorios(*)..." );
+    }
+    return ban;
+  }
+
   // Da de alta una herramienta nueva en pañol
   function guardar(operacion){
-    wo();
+
     var recurso = "";
     if (operacion == "editar") {
 
+      if( !validarCampos('formEdicion') ){
+        return;
+      }
       var form = $('#formEdicion')[0];
       var datos = new FormData(form);
       var datos = formToObject(datos);
       recurso = 'index.php/<?php echo PAN ?>Herramienta/editar';
     } else {
 
+      if( !validarCampos('formHerramientas') ){
+        return;
+      }
       var form = $('#formHerramientas')[0];
       var datos = new FormData(form);
       var datos = formToObject(datos);
       recurso = 'index.php/<?php echo PAN ?>Herramienta/guardar';
     }
-
+    wo();
     $.ajax({
         type: 'POST',
         data:{ datos },
@@ -360,13 +403,17 @@
           $("#cargar_tabla").load("<?php echo base_url(PAN); ?>Herramienta/listarHerramientas");
           wc();
           $("#boxDatos").hide(500);
-          $("#frm_salida")[0].reset();
+          $("#formHerramientas")[0].reset();
           $("#botonAgregar").removeAttr("disabled");
-          alertify.success("Vale de Salida Agregado con Exito");
+          if (operacion == "editar") {
+            alertify.success("Herramienta Editada Exitosamente");
+          }else{
+            alertify.success("Herramienta Agregada con Exito");
+          }
         },
         error: function(result){
           wc();
-          alertify.error("Error agregando Vale de Salida");
+          alertify.error("Error agregando Herramienta");
         }
     });
 

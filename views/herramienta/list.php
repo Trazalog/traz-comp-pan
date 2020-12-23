@@ -1,5 +1,5 @@
 <!-- ______ TABLA PRINCIPAL DE PANTALLA ______ -->
-<table id="tabla_circuitos" class="table table-bordered table-striped">
+<table id="tabla_herramientas" class="table table-bordered table-striped">
 		<thead class="thead-dark" bgcolor="#eeeeee">
       <th>Acciones</th>
       <th>Codigo</th>
@@ -70,7 +70,6 @@
     $(".modal-header").append('<h4 class="modal-title"  id="myModalLabel"><span id="modalAction" class="fa fa-fw fa-pencil text-light-blue"></span> Agregar Herramienta </h4>');
     ///FIXME: LIMPIAR LOS CAMPOS Y SELECTS
   });
-
   // llena modal paa edicio y muestra
   function llenarModal(datajson){
 
@@ -115,17 +114,11 @@
         data:{herr_id: herr_id},
         url: 'index.php/<?php echo PAN ?>Herramienta/borrarHerramienta',
         success: function(result) {
-              // if(result == "ok"){
-                wc();
-              //   $("#modalaviso").modal('hide');
-              //   alertify.success("Circuito Eliminado con exito");
-              //   $("#cargar_tabla").load("<?php// echo base_url(); ?>index.php/general/Estructura/Circuito/Listar_Circuitos");
 
-              // }else{
-              //   wc();
-                $("#modalaviso").modal('hide');
-              //   alertify.success("Error al Eliminar Circuito");
-              // }
+              $("#cargar_tabla").load("<?php echo base_url(PAN); ?>/Herramienta/listarHerramientas");
+              wc();
+              $("#modalaviso").modal('hide');
+
         },
         error: function(result){
           wc();
@@ -134,7 +127,8 @@
         }
     });
   }
-
+  // Config Tabla
+  DataTable($('#tabla_herramientas'));
 
 </script>
 

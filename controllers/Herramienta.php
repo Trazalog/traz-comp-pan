@@ -12,7 +12,7 @@ class Herramienta extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->model('Herramientas');
-		
+
 	}
 
 	/**
@@ -77,7 +77,11 @@ class Herramienta extends CI_Controller {
 		$herram['usuario_app'] = userNick();
 		$herram['empr_id'] = empresa();
 		$resp = $this->Herramientas->guardar($herram);
-		return json_encode($resp);
+		if ($resp != null) {
+			return json_encode(true);
+		} else {
+			return json_encode(false);
+		}
 	}
 
 	/**
