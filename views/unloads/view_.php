@@ -33,13 +33,13 @@
 
 			<div class="box-body">
 
-					<form class="formsalida registerForm" id="frm_entrada" method="POST" autocomplete="off">
+					<form class="frm_entrada registerForm" id="frm_entrada" method="POST" autocomplete="off">
 
               <!--Establecimientos-->
               <div class="col-md-8 col-sm-8 col-xs-12">
                 <div class="form-group">
                 <label for="esta_id">Establecimientos<strong style="color: #dd4b39">*</strong>:</label>
-                <select type="text" id="esta_id" name="" class="form-control selec_habilitar" >
+                <select type="text" id="esta_id" name="" class="form-control selec_habilitar requerido" >
                     <option value="" disabled selected>-Seleccione opcion-</option>
                     <?php
                         foreach ($establecimientos as $establec) {
@@ -55,10 +55,10 @@
               <!--Responsable-->
 							<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="form-group">
-											<label for="Codigo">Responsable:</label>
+											<label for="Codigo">Responsable<strong style="color: #dd4b39">*</strong>:</label>
 											<div class="input-group date">
 													<div class="input-group-addon"><i class="glyphicon glyphicon-check"></i></div>
-                          <input type="text" class="form-control" name="" id="respons" value="<?php echo $this->session->userdata['first_name'].' '.$this->session->userdata['last_name']?>" readonly>
+                          <input type="text" class="form-control requerido" name="" id="respons" value="<?php echo $this->session->userdata['first_name'].' '.$this->session->userdata['last_name']?>" readonly>
                           <input type="text" class="form-control hidden" name="responsable" id="resp" value="<?php echo $this->session->userdata['first_name'].' '.$this->session->userdata['last_name']?>">
                           <input type="text" class="form-control hidden" name="usuario_app" id="usr_app" value="<?php echo $this->session->userdata['usernick']?>">
 
@@ -69,10 +69,10 @@
 							<!-- Pañol-->
 							<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="form-group">
-											<label for="pano_id">Pañol:</label>
+											<label for="pano_id">Pañol<strong style="color: #dd4b39">*</strong>:</label>
 											<div class="input-group date">
 													<div class="input-group-addon"><i class="glyphicon glyphicon-check"></i></div>
-                          <select class="form-control select3" data-placeholder="Seleccione tipo residuo"  style="width: 100%;"  id="pano_id" name="pano_id"/>
+                          <select class="form-control select3 requerido" data-placeholder="Seleccione tipo residuo"  style="width: 100%;"  id="pano_id" name="pano_id"/>
 
 											</div>
 									</div>
@@ -82,10 +82,10 @@
               <!--Comprobante-->
 							<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="form-group">
-											<label for="comprobante">Comprobante:</label>
+											<label for="comprobante">Comprobante<strong style="color: #dd4b39">*</strong>:</label>
 											<div class="input-group date">
 													<div class="input-group-addon"><i class="glyphicon glyphicon-check"></i></div>
-                          <input type="text" class="form-control" name="comprobante" id="comp" value="">
+                          <input type="text" class="form-control requerido" name="comprobante" id="comp" value="">
 											</div>
 									</div>
 							</div>
@@ -93,10 +93,10 @@
               <!--Destino-->
 							<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="form-group">
-											<label for="destino">Destino:</label>
+											<label for="destino">Destino<strong style="color: #dd4b39">*</strong>:</label>
 											<div class="input-group date">
 													<div class="input-group-addon"><i class="glyphicon glyphicon-check"></i></div>
-                          <input type="text" class="form-control" name="destino" id="dest" value="">
+                          <input type="text" class="form-control requerido" name="destino" id="dest" value="">
 											</div>
 									</div>
 							</div>
@@ -108,7 +108,7 @@
                   <textarea class="form-control" id="observ" name="observaciones" rows="3" placeholder="Ingrese alguna observacionn si lo desea...."></textarea>
               </div>
               <!--_____________________________________________-->
-          </form>
+          
                <!--_________________SEPARADOR_________________-->
                   <div class="col-md-12">
                   <br>
@@ -123,7 +123,7 @@
                   </select>
                 </div>
               <!--_____________________________________________-->
-
+              </form>
               <!--_________________SEPARADOR_________________-->
                   <div class="col-md-12">
                   <br>
@@ -167,7 +167,7 @@
 
 					<!--_________________ GUARDAR_________________-->
 					<div class="col-md-12">
-							<button type="submit" class="btn btn-primary pull-right" onclick="guardar()">GUARDAR</button>
+							<button type="submit" class="btn btn-primary pull-right enabDisab" onclick="guardar()">GUARDAR</button>
 					</div>
 					<!--__________________________________-->
 
@@ -212,7 +212,7 @@ $("#botonAgregar").on("click", function() {
     $("#boxDatos").focus();
     $("#boxDatos").show();
 });
-	
+
 // muestra box de datos al dar click en X
 $("#btnclose").on("click", function() {
 
@@ -235,9 +235,6 @@ $("#btnclose").on("click", function() {
 
 });
 
-
-//////////////////////////////////////////////////////////////
-
 // al cambiar de establecimiento llena select con pañoles
 $("#esta_id").change(function(){
 
@@ -256,15 +253,23 @@ $("#esta_id").change(function(){
             $('#pano_id').empty();
             panol = JSON.parse(result);
             var html = "";
-            html = html + '<option value="" disabled selected>-Seleccione Pañol-</option>';
-            $.each(panol, function(i,h){
-              html = html + "<option data-json= '" + JSON.stringify(h) + "'value='" + h.pano_id + "'>" + h.descripcion + "</option>";
-            });
+
+            if (panol == null) {
+
+              html = html + '<option value="" disabled selected>- El Establecimiento no tiene Pañol Asociado -</option>';
+            }else{
+
+              html = html + '<option value="" disabled selected>-Seleccione Pañol-</option>';
+              $.each(panol, function(i,h){
+                html = html + "<option data-json= '" + JSON.stringify(h) + "'value='" + h.pano_id + "'>" + h.descripcion + "</option>";
+              });
+            }
             $('#pano_id').append(html);
             wc();
       },
       error: function(result){
-        alert('error');
+        wc();
+        alert('Error al traer Pañoles...');
       }
   });
 });
@@ -303,13 +308,20 @@ $("#pano_id").change(function(){
 // Agregar Herramientas
 function armartablistherr(){   // inserta valores en la tabla
 
+    //verifico que haya seleccionada una herramienta
+    var seleccionado = $("#tools").find(':selected').val();
+    if ( seleccionado == undefined){
+      return;
+    }
+    //habilito btn guardar
+    $(".enabDisab").removeAttr("disabled");
+
     $("#pano").attr('disabled', 'disabled');
     var $herramienta = $("#tools").find(':selected').text();
     var $herrId = $("#tools").find(':selected').val();
     $('#tools').val(null).trigger('change');
 
     $(".tablalistherram tbody").append(
-
       '<tr>'+
       '<td><button type="button" title="Eliminar" class="btn btn-primary btn-circle btnEliminar" id="btnBorrar"  ><span class="glyphicon glyphicon-trash" aria-hidden="true" ></span></button></td>'+
       '<td>'+ $herramienta +'</td>'+
@@ -319,20 +331,55 @@ function armartablistherr(){   // inserta valores en la tabla
 }
 
 // Evento que selecciona la fila y la elimina
-// sino hay herramientas en la tabla, habilita nuevamente select pañol
+// sino hay herramientas en la tabla, deshabilita boton guardar
 $(document).on("click",".btnEliminar",function(){
-    var parent = $(this).closest('tr');
-    $(parent).remove();
 
+    $('#tablalistherram').DataTable().row( $(this).closest('tr') ).remove().draw();
     if( ! $('#tablalistherram').DataTable().data().any() ) {
-      $('#pano').prop("disabled", "");
+      //deshabilito el boton guardar
+      $(".enabDisab").attr('disabled', 'disabled');
     }
 });
 
+// valida campos obligatorios
+function validarCampos(form){
 
-/////////////////////////////////////////////////////////
+    var mensaje = "";
+    var ban = true;
+    $('#' + form).find('.requerido').each(function() {
+      if (this.value == "" || this.value=="-1") {
+          ban = ban && false;
+          return;
+      }
+    });
+
+    if (!ban){
+        if(!alertify.errorAlert){
+          alertify.dialog('errorAlert',function factory(){
+            return{
+                    build:function(){
+                        var errorHeader = '<span class="fa fa-times-circle fa-2x" '
+                        +    'style="vertical-align:middle;color:#e10000;">'
+                        + '</span> Error...!!';
+                        this.setHeader(errorHeader);
+                    }
+                };
+            },true,'alert');
+        }
+        alertify.errorAlert("Por favor complete los campos Obligatorios(*)..." );
+    }
+    return ban;
+}
+
 function guardar(){
 
+  if( !validarCampos('frm_entrada') ){
+    return;
+  }
+  alert("paso a guardar");
+  return;
+
+  wo();
   var form = $('#frm_entrada')[0];
   var datos = new FormData(form);
   var datos = formToObject(datos);
@@ -348,31 +395,28 @@ function guardar(){
 
   $.ajax({
       type: 'POST',
-      //enctype: 'multipart/form-data',
       data:{datos, tools},
-      // processData: false,
-      // contentType: false,
-      // cache: false,
-      //dataType: 'JSON',
       url: 'index.php/<?php echo PAN ?>Unload/guardar',
       success: function(result) {
 
-        $("#cargar_tabla").load("<?php echo base_url(PAN); ?>Unload/listarSalidas");
+        $("#cargar_tabla").load("<?php echo base_url(PAN); ?>Unload/listarEntradas");
 
         $("#boxDatos").hide(500);
         $("#frm_salida")[0].reset();
         $("#botonAgregar").removeAttr("disabled");
-
-        alertify.success("Vale de Salida Agregado con Exito");
+        wc();
+        alertify.success("Vale de Entrada Agregada con Exito");
       },
       error: function(result){
-        alertify.error("Error agregando Vale de Salida");
+        wc();
+        alertify.error("Error agregando Vale de Entrada");
       }
   });
 
 }
 
 
+DataTable($('#tablalistherram'));
 // configuracion select2
 $("#tools").select2({
     placeholder: "Seleccione una herramienta...",

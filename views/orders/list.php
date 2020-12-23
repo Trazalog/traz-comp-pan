@@ -45,3 +45,9 @@
       </div><!-- /.box -->
     </div><!-- /.col -->
   </div><!-- /.row -->
+<script>
+
+// Config Tabla
+  DataTable($('#vales'));
+
+</script>
