@@ -212,7 +212,7 @@
 
                       <div class="col-sm-6">
 
-                        <!--_____________ MODELO _____________-->
+                        <!--_____________ TIPO _____________-->
                           <div class="form-group">
                             <label for="tipo_edit" class="col-sm-4 control-label">Tipo:</label>
                             <div class="col-sm-8">
@@ -266,7 +266,7 @@
 
                 <div class="form-group text-right">
                     <button type="" class="btn btn-primary habilitar" data-dismiss="modal" id="btnsave_edit" onclick="guardar('editar')">Guardar</button>
-                    <button type="" class="btn btn-default cerrarModalEdit" id="" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-default cerrarModalEdit" data-dismiss="modal">Cerrar</button>
                 </div>
 
             </div>
