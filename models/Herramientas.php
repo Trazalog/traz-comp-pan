@@ -50,7 +50,7 @@ class Herramientas extends CI_Model
 		function obtenerMarcas()
 		{
 			log_message('INFO','#TRAZA|| >> ');
-			$aux = $this->rest->callAPI("GET",REST_PAN."/tablas/marcas_herramientas");
+			$aux = $this->rest->callAPI("GET",REST_CORE."/tabla/marcas_herramientas/empresa/".empresa());
 			$aux =json_decode($aux["data"]);
 			return $aux->tablas->tabla;
 		}
