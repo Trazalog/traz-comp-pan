@@ -53,10 +53,9 @@ class Trazacomps extends CI_Model {
 		* @return array con pañoles
 		*/
 		function obtenerPanoles(){
-
 			log_message('INFO','#TRAZA|TRAZA-COMP-PAN|TRAZACOMPS|OBTENERPANOLES >> ');
 			$empr_id = empresa();
-			$aux = $this->rest->callAPI("GET",REST_PAN."/panoles/empresa/".$empr_id);
+			$aux = $this->rest->callAPI("GET",REST_PAN."/panol/empresa/".$empr_id);
 			$aux =json_decode($aux["data"]);
 			return $aux->panoles->panol;
 		}
