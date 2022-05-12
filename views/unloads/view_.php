@@ -36,7 +36,7 @@
 					<form class="frm_entrada registerForm" id="frm_entrada" method="POST" autocomplete="off">
 
               <!--Establecimientos-->
-              <div class="col-md-8 col-sm-8 col-xs-12">
+              <div class="col-md-6 col-sm-6 col-xs-12">
                 <div class="form-group">
                 <label for="esta_id">Establecimientos<strong style="color: #dd4b39">*</strong>:</label>
                 <select type="text" id="esta_id" name="" class="form-control selec_habilitar requerido" >
@@ -50,23 +50,7 @@
                 </div>
               </div>
               <!--________________-->
-
-
-              <!--Responsable-->
-							<div class="col-md-6 col-sm-6 col-xs-12">
-									<div class="form-group">
-											<label for="Codigo">Responsable<strong style="color: #dd4b39">*</strong>:</label>
-											<div class="input-group date">
-													<div class="input-group-addon"><i class="glyphicon glyphicon-check"></i></div>
-                          <input type="text" class="form-control requerido" name="" id="respons" value="<?php echo $this->session->userdata['first_name'].' '.$this->session->userdata['last_name']?>" readonly>
-                          <input type="text" class="form-control hidden" name="responsable" id="resp" value="<?php echo $this->session->userdata['first_name'].' '.$this->session->userdata['last_name']?>">
-                          <input type="text" class="form-control hidden" name="usuario_app" id="usr_app" value="<?php echo $this->session->userdata['usernick']?>">
-
-											</div>
-									</div>
-							</div>
-							<!--_____________________________________________-->
-							<!-- Pañol-->
+              <!-- Pañol-->
 							<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="form-group">
 											<label for="pano_id">Pañol<strong style="color: #dd4b39">*</strong>:</label>
@@ -78,7 +62,22 @@
 									</div>
 							</div>
 							<!--_____________________________________________-->
-
+              <!--Encargados-->
+							<div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label for="Codigo">Encargados:</label>
+                    <ul id="listaEncargados">
+                      <!-- <li>Datos empleado</li> -->
+                    </ul>
+                    <!-- <div class="input-group date">
+                        <div class="input-group-addon"><i class="glyphicon glyphicon-check"></i></div>
+                        <input type="text" class="form-control requerido" name="" id="respons" value="<?php echo $this->session->userdata['first_name'].' '.$this->session->userdata['last_name']?>" readonly>
+                        <input type="text" class="form-control hidden" name="responsable" id="resp" value="<?php echo $this->session->userdata['first_name'].' '.$this->session->userdata['last_name']?>">
+                        <input type="text" class="form-control hidden" name="usuario_app" id="usr_app" value="<?php echo $this->session->userdata['usernick']?>">
+                    </div> -->
+                </div>
+            </div>
+							<!--_____________________________________________-->	
               <!--Comprobante-->
 							<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="form-group">
@@ -281,7 +280,7 @@ $("#pano_id").change(function(){
       var opc = 'Seleccione una herramienta';
       $('#tools').append(opc).trigger('change');
       var pano_id = $(this).val();
-
+      cargarEncargados(pano_id);
       $.ajax({
           type: 'POST',
           data:{pano_id: pano_id},
@@ -303,6 +302,38 @@ $("#pano_id").change(function(){
           }
       });
 });
+
+function cargarEncargados(pano_id) {
+  $('#listaEncargados').html('');
+  $.ajax({
+    type: 'POST',
+    data:{pano_id: pano_id},
+    url: 'index.php/<?php echo PAN ?>Order/obtenerEncargadosPanol',
+    success: function(result) {
+    //FIXME: VER CUANDO NO TRAE NADA
+      var user = JSON.parse(result);
+      $.each(user, function(i,h){
+        $('#listaEncargados').html($('#listaEncargados').html()+`
+        <li> ${h.first_name} ${h.last_name} </li>
+        `);
+      });
+      $('#tools').prop("disabled", false);
+      wc();
+      // error: function(){
+      //   $('#listaEncargados').html($('#listaEncargados').html()+`
+      //     <li> echo("No hay encargados"); </li>
+      //     `);
+      //   wc();
+      // }
+    },
+    error: function(){
+      wc();
+    },
+    complete: function(){
+      wc();
+    }
+  });
+}
 
 
 // Agregar Herramientas
