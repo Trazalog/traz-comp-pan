@@ -55,18 +55,18 @@
                     <option value="-1" disabled selected>-Seleccione opcion-</option>
                     <?php
                         foreach ($panoles as $panol) {
-                            echo '<option  value="'.$panol->pano_id.'">'.$panol->descripcion.'</option>';
+                            echo '<option  value="'.$panol->pano_id.'">'.$panol->nombre.'</option>';
                         }
                     ?>
                 </select>
                 </div>
             </div>
             <!--________________-->
-            <!--Codigo-->
+            <!--Código-->
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <div class="form-group">
-                  <label for="codigo">Codigo <strong style="color: #dd4b39">*</strong>:</label>
-                  <input type="text" id="codigo" name="codigo" class="form-control requerido" placeholder="Ingrese Codigo...">
+                  <label for="codigo">Código <strong style="color: #dd4b39">*</strong>:</label>
+                  <input type="text" id="codigo" name="codigo" class="form-control requerido" placeholder="Ingrese Código...">
                 </div>
             </div>
             <!--________________-->
@@ -260,7 +260,6 @@
 
   // al cambiar de establecimiento llena select con pañoles
   $("#esta_id").change(function(){
-
       wo();
       //limpia las opciones de pañol
       $('#pano_id').empty();
@@ -278,7 +277,7 @@
             }else{
               html = html + '<option value="-1" disabled selected>-Seleccione Pañol-</option>';
               $.each(panol, function(i,h){
-                html = html + "<option data-json= '" + JSON.stringify(h) + "'value='" + h.pano_id + "'>" + h.descripcion + "</option>";
+                html = html + "<option data-json= '" + JSON.stringify(h) + "'value='" + h.pano_id + "'>" + h.nombre + "</option>";
               });
             }
             $('#pano_id').append(html);

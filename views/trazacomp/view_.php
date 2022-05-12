@@ -43,7 +43,7 @@
               <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="active"><a href="#recibe" id="recepcion" aria-controls="recibe" role="tab" data-toggle="tab">Recibo de componente</a></li>
                 <li role="presentation"><a href="#entrega" id="entr" aria-controls="entrega" role="tab" data-toggle="tab">Entrega de componente</a></li>
-                <li role="presentation"><a href="#nuevaest" id="nuevaesteria" aria-controls="nuevaest" role="tab" data-toggle="tab">Nueva Estanteria</a></li>
+                <li role="presentation"><a href="#nuevaest" id="nuevaesteria" aria-controls="nuevaest" role="tab" data-toggle="tab">Nueva Estantería</a></li>
               </ul>
             <!-- /  Nav tabs -->
             <!-- Tab panes -->
@@ -55,10 +55,10 @@
                     <div class="col-xs-12 col-sm-6">
                       <label for="pano_id">Seleccione Pañol<strong style="color: #dd4b39">*</strong>:</label>
                       <select type="text" id="pano_id_rec" name="pano_ide" class="form-control selec_habilitar" >
-                          <option value="" disabled selected>-Seleccione opcion-</option>
+                          <option value="" disabled selected>-Seleccione Pañol-</option>
                           <?php
                               foreach ($panoles as $panol) {
-                                  echo '<option  value="'.$panol->pano_id.'">'.$panol->descripcion.'</option>';
+                                  echo '<option  value="'.$panol->pano_id.'">'.$panol->nombre.'</option>';
                               }
                           ?>
                       </select>
@@ -73,15 +73,17 @@
                       </ul>
                       <!-- <input type="text" class="form-control limp_recibe" id="resp_recibe" placeholder="Responsable Pañol"> -->
                     </div>
+                    <!--_________________SEPARADOR_________________-->
+                    <div class="col-md-12"><br></div>
+                    <!--_________________SEPARADOR_________________-->
                     <div class="col-xs-12 col-sm-6">
                       <label for="entrega_recibe">Entrega: </label>
                       <input type="text" class="form-control limp_recibe" id="entrega_recibe" placeholder="Operario o Personal Externo">
                     </div>
-
                     <div class="col-xs-12 col-sm-6">
                       <label for="equi_id">Equipo<strong style="color: #dd4b39">*</strong>:</label>
                       <select type="text" id="equiporec" name="equi_id" class="form-control selec_habilitar" >
-                          <option value="" disabled selected>-Seleccione opcion-</option>
+                          <option value="" disabled selected>-Seleccione Equipo-</option>
                           <?php
                               foreach ($equipos as $eq) {
                                   echo '<option  value="'.$eq->equi_id.'">'.$eq->descripcion.'</option>';
@@ -89,18 +91,27 @@
                           ?>
                       </select>
                     </div>
+                    <!--_________________SEPARADOR_________________-->
+                    <div class="col-md-12"><br></div>
+                    <!--_________________SEPARADOR_________________-->
                     <div class="col-xs-12 col-sm-6">
                       <label>Componente</label> <strong style="color: #dd4b39">*</strong> :  
                       <select  id="componenterec" name="componenterec" class="form-control" />
                     </div>
                     <div class="col-xs-12 col-sm-6">
-                      <label>Estanteria</label> <strong style="color: #dd4b39">*</strong> :  
+                      <label>Estantería</label> <strong style="color: #dd4b39">*</strong> :  
                       <select  id="estanteria_rec" name="estanteria" class="form-control estanteria" />
                     </div>
+                    <!--_________________SEPARADOR_________________-->
+                    <div class="col-md-12"><br></div>
+                    <!--_________________SEPARADOR_________________-->
                     <div class="col-xs-12 col-sm-6">
                       <label>Fila</label><strong style="color: #dd4b39">*</strong> :
                       <select class="form-control" id="fila_rec" name="fila" style="width: 100%;" />
-                    </div><br><br>
+                    </div>
+                    <!--_________________SEPARADOR_________________-->
+                    <div class="col-md-12"><br></div>
+                    <!--_________________SEPARADOR_________________-->
                     <div class="col-xs-12">
                       <br>
                       <label>Observaciones:</label>
@@ -120,7 +131,7 @@
                               <th></th>
                               <th>Equipo</th>
                               <th>Componente</th>
-                              <th>Estanteria</th>
+                              <th>Estantería</th>
                               <th>Fila</th>
                               <th>Observaciones</th>
                             </tr>
@@ -164,10 +175,10 @@
                       <div class="col-xs-12 col-sm-6">
                         <label for="pano_id_ent">Seleccione Pañol<strong style="color: #dd4b39">*</strong>:</label>
                         <select type="text" id="pano_id_ent" name="pano_id" class="form-control selec_habilitar" >
-                            <option value="" disabled selected>-Seleccione opcion-</option>
+                            <option value="" disabled selected>-Seleccione Pañol-</option>
                             <?php
                                 foreach ($panoles as $panol) {
-                                    echo '<option  value="'.$panol->pano_id.'">'.$panol->descripcion.'</option>';
+                                    echo '<option  value="'.$panol->pano_id.'">'.$panol->nombre.'</option>';
                                 }
                             ?>
                         </select>
@@ -245,10 +256,10 @@
                         <div class="col-xs-12 col-sm-8">
                           <label for="pano_id">Seleccione Pañol<strong style="color: #dd4b39">*</strong>:</label>
                           <select type="text" id="pano_id" name="pano_id" class="form-control selec_habilitar" >
-                              <option value="" disabled selected>-Seleccione opcion-</option>
+                              <option value="" disabled selected>-Seleccione Pañol-</option>
                               <?php
                                   foreach ($panoles as $panol) {
-                                      echo '<option  value="'.$panol->pano_id.'">'.$panol->descripcion.'</option>';
+                                      echo '<option  value="'.$panol->pano_id.'">'.$panol->nombre.'</option>';
                                   }
                               ?>
                           </select>
@@ -258,7 +269,7 @@
                         <!--_________________SEPARADOR_________________-->
 
                         <div class="col-xs-12 col-md-6">
-                          <label for="numestanteria">Cód. Estanteria <strong style="color: #dd4b39">*</strong></label> 
+                          <label for="numestanteria">Cód. Estantería <strong style="color: #dd4b39">*</strong></label> 
                           <input type="" class="form-control cleanEst" id="numestanteria" name="codigo" placeholder=" Ingrese código...">
                         </div>
                         <div class="col-xs-12 col-md-6">
@@ -274,7 +285,7 @@
                         </div>
                         <div class="col-xs-12">
                           <br>
-                          <button type="button" id="estNueva" class="botones btn btn-primary" onclick="guardarEstanteria()">Guardar Estanteria</button>
+                          <button type="button" id="estNueva" class="botones btn btn-primary" onclick="guardarEstanteria()">Guardar Estantería</button>
                         </div>
                       </form>
                     </div>
@@ -375,7 +386,7 @@
                 $('#estanteria_rec').empty();
                 estanteria = JSON.parse(result);
                 var html = "";
-                html = html + '<option value="" disabled selected>-Seleccione Estanteria-</option>';
+                html = html + '<option value="" disabled selected>-Seleccione Estantería-</option>';
                 $.each(estanteria, function(i,h){
                   html = html + "<option data-json= '" + JSON.stringify(h) + "'value='" + h.estan_id + "'>" + h.descripcion + "</option>";
                 });
@@ -619,19 +630,19 @@ $("#pano_id_rec").change(function(){
     success: function(result) {
     //FIXME: VER CUANDO NO TRAE NADA
       var user = JSON.parse(result);
-      $.each(user, function(i,h){
+      if (user == null) {
         $('#listaEncargadosEnc').html($('#listaEncargadosEnc').html()+`
-        <li> ${h.first_name} ${h.last_name} </li>
+          <li style="list-style:none";> - El Pañol no tiene Encargados Asociados - </li>
         `);
-      });
-      $('#tools').prop("disabled", false);
+      }else{
+        $.each(user, function(i,h){
+          $('#listaEncargadosEnc').html($('#listaEncargadosEnc').html()+`
+          <li> ${h.first_name} ${h.last_name} </li>
+          `);
+        });
+      }      
+      // $('#tools').prop("disabled", false);
       wc();
-      // error: function(){
-      //   $('#listaEncargadosEnc').html($('#listaEncargadosEnc').html()+`
-      //     <li> echo("No hay encargados"); </li>
-      //     `);
-      //   wc();
-      // }
     },
     error: function(){
       wc();
@@ -653,19 +664,19 @@ $("#pano_id_ent").change(function(){
     success: function(result) {
     //FIXME: VER CUANDO NO TRAE NADA
       var user = JSON.parse(result);
-      $.each(user, function(i,h){
+      if (user == null) {
         $('#listaEncargadosEnt').html($('#listaEncargadosEnt').html()+`
-        <li> ${h.first_name} ${h.last_name} </li>
+          <li style="list-style:none";> - El Pañol no tiene Encargados Asociados - </li>
         `);
-      });
-      $('#tools').prop("disabled", false);
+      }else{
+        $.each(user, function(i,h){
+          $('#listaEncargadosEnt').html($('#listaEncargadosEnt').html()+`
+          <li> ${h.first_name} ${h.last_name} </li>
+          `);
+        });
+      }      
+      // $('#tools').prop("disabled", false);
       wc();
-      // error: function(){
-      //   $('#listaEncargadosEnt').html($('#listaEncargadosEnt').html()+`
-      //     <li> echo("No hay encargados"); </li>
-      //     `);
-      //   wc();
-      // }
     },
     error: function(){
       wc();
