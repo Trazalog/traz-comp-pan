@@ -40,7 +40,7 @@
                 <div class="form-group">
                 <label for="esta_id">Establecimientos<strong style="color: #dd4b39">*</strong>:</label>
                 <select type="text" id="esta_id" name="" class="form-control selec_habilitar requerido" >
-                    <option value="" disabled selected>-Seleccione opcion-</option>
+                    <option value="" disabled selected>-Seleccione Establecimiento-</option>
                     <?php
                         foreach ($establecimientos as $establec) {
                             echo '<option  value="'.$establec->esta_id.'">'.$establec->nombre.'</option>';
@@ -260,7 +260,7 @@ $("#esta_id").change(function(){
 
               html = html + '<option value="" disabled selected>-Seleccione Pañol-</option>';
               $.each(panol, function(i,h){
-                html = html + "<option data-json= '" + JSON.stringify(h) + "'value='" + h.pano_id + "'>" + h.descripcion + "</option>";
+                html = html + "<option data-json= '" + JSON.stringify(h) + "'value='" + h.pano_id + "'>" + h.nombre + "</option>";
               });
             }
             $('#pano_id').append(html);
@@ -289,7 +289,7 @@ $("#pano_id").change(function(){
 
               var herram = JSON.parse(result);
               $.each(herram, function(i,h){
-                var texto = 'Codigo: '+ h.herrcodigo +' - Descripción: '+ h.herrdescrip +' - Marca: '+ h.herrmarca;
+                var texto = 'Código: '+ h.herrcodigo +' - Descripción: '+ h.herrdescrip +' - Marca: '+ h.herrmarca;
                 var opc = new Option(texto, h.herrId, false, false); //crea nueva opcion sin seleccionarla
                 $('#tools').val(null).trigger('change');
                 $('#tools').append(opc).trigger('change');
@@ -312,12 +312,18 @@ function cargarEncargados(pano_id) {
     success: function(result) {
     //FIXME: VER CUANDO NO TRAE NADA
       var user = JSON.parse(result);
-      $.each(user, function(i,h){
+      if (user == null) {
         $('#listaEncargados').html($('#listaEncargados').html()+`
-        <li> ${h.first_name} ${h.last_name} </li>
+          <li style="list-style:none";> - El Pañol no tiene Encargados Asociados - </li>
         `);
-      });
-      $('#tools').prop("disabled", false);
+      }else{
+        $.each(user, function(i,h){
+          $('#listaEncargados').html($('#listaEncargados').html()+`
+          <li> ${h.first_name} ${h.last_name} </li>
+          `);
+        });
+      }
+      // $('#tools').prop("disabled", false);
       wc();
       // error: function(){
       //   $('#listaEncargados').html($('#listaEncargados').html()+`
