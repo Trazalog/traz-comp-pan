@@ -3,7 +3,7 @@
     <div class="col-xs-12">
       <div class="box">
         <div class="box-header with-border">
-          <h3 class="box-title">Vales de SaLida</h3>
+          <h3 class="box-title">Vales de Salida</h3>
 
         </div><!-- /.box-header -->
         <div class="box-body">
