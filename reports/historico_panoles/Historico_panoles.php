@@ -15,7 +15,7 @@ use \koolreport\processes\Custom;
 *
 * @autor Hugo Gallardo
 */
-class Articulos_vencidos extends \koolreport\KoolReport
+class Historico_panoles extends \koolreport\KoolReport
 {
     use \koolreport\codeigniter\Friendship;
     /*Filtros Avanzados*/
@@ -30,7 +30,7 @@ class Articulos_vencidos extends \koolreport\KoolReport
 
     protected function settings()    {
 
-				log_message('INFO','#TRAZA|HISTORICOARTICULOS|SETTINGS >> ');
+		log_message('INFO','#TRAZA|HISTORICOPANOLES|SETTINGS >> ');
         $json = $this->params;
         $data = json_encode($json);
 

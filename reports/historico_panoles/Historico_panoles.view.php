@@ -8,7 +8,7 @@
 
     <div class="box-header with-border">
         <div class="box-tittle">
-            <h4>Movimientos de Stock</h4>
+            <h4>Reporte histórico de Pañoles</h4>
         </div>
     </div>
 
@@ -16,9 +16,7 @@
 
       <!-- _____ GRUPO 1 _____ -->
         <div class="col-md-12">
-
             <div class="form-group">
-
               <div class="col-md-4 col-md-6 mb-4 mb-lg-0">
                 <label style="padding-left: 20%;">Desde <strong class="text-danger">*</strong> :</label>
                 <div class="input-group date">
@@ -29,35 +27,24 @@
                   <input type="date" class="form-control pull-right" id="datepickerDesde" name="datepickerDesde" placeholder="Desde">
                 </div>
               </div>
-
-
               <div class="col-md-4 col-md-6 mb-4 mb-lg-0">
                 <label>Hasta  <strong class="text-danger">*</strong> :</label>
                 <div class="input-group date">
                   <input type="date" class="form-control" id="datepickerHasta" name="datepickerHasta" placeholder="Hasta">
                   <a class="input-group-addon" style="cursor: pointer;" onclick="filtro()" title="Más filtros">
-
                   </a>
                 </div>
               </div>
-
               <div class="col-md-4 col-md-6 mb-4 mb-lg-0">
-                  <label for="tipoajuste" class="form-label">Tipo Movimiento  <strong class="text-danger">*</strong>  :</label>
+                  <label for="tipoajuste" class="form-label">Tipo Movimiento<strong class="text-danger">*</strong>  :</label>
                   <select class="form-control select2 select2-hidden-accesible" id="tipoajuste" name="tipoajuste">
                       <option value="-1" disabled selected>-Seleccione-</option>
                       <option value="TODOS">Todos</option>
                       <option value="INGRESO">Ingreso</option>
                       <option value="EGRESO">Egreso</option>
-                      <option value="AJUSTE">Ajuste</option>
-                      <option value="ETAPAPRODINGRESO">Etapa Prod Ingresos</option> <!-- produccion caso 1 -->
-                      <option value="ENPROCESOENETAPA">Prod En Proceso Etapa</option> <!-- produccion caso 2 -->
-                      <option value="DESCENPROCESO">Desc. en Proceso</option> <!-- produccion caso 3 -->
                   </select>
-
               </div>
-
             </div>
-
         </div>
       <!-- _____ GRUPO 1 _____ -->
 
@@ -67,28 +54,30 @@
 
       <!-- _____ GRUPO 2 _____ -->
         <div class="col-md-12">
-
             <div class="form-group">
+              <div class="col-md-4 col-md-6 mb-4 mb-lg-0">
+                <label for="panol" class="form-label">Pañol <strong class="text-danger">*</strong> :</label>
+                <select onchange="seleccionpano(this)" class="form-control select2 select2-hidden-accesible" id="panol" name="panol" />
+              </div>
 
               <div class="col-md-4 col-md-6 mb-4 mb-lg-0">
-                <label for="establecimiento" class="form-label">Establecimiento  <strong class="text-danger">*</strong> :</label>
-                <select onchange="seleccionesta(this)" class="form-control select2 select2-hidden-accesible" id="establecimiento" name="establecimiento" />
+                <label for="herr_id" class="form-label">Herramienta <strong class="text-danger">*</strong> :</label>
+                <select class="form-control select2 select2-hidden-accesible" id="herr_id" name="herr_id" />
               </div>
 
-              <div class="col-md-4 col-md-6 mb-4 mb-lg-0 habilitado">
-                <label for="depo_id" class="form-label">Depósito:</label>
-                <select class="form-control select2 select2-hidden-accesible" id="depo_id" name="depo_id" />
+              <!-- <div class="col-md-4 col-md-6 mb-4 mb-lg-0" >
+                  <label for="responsable" class="form-label">Responsable:</label>
+                <div id="list_responsables"> </div>
+              </div> -->
+              <div class="col-md-4 col-md-6 mb-4 mb-lg-0" >
+                <label for="responsable" class="form-label">Responsable:</label>
+                <select class="form-control select2 select2-hidden-accesible" id="responsable" name="responsable" />
+                <!-- <select onchange="seleccionrespo(this)" class="form-control select2 select2-hidden-accesible" id="responsable" name="responsable" /> -->
               </div>
-
-              <div class="col-md-4 col-md-6 mb-4 mb-lg-0 habilitado" >
-                  <label for="zona" class="form-label">Artículo  <strong class="text-danger">*</strong> :</label>
-                <div id="list_articulos"> </div>
-              </div>
-
             </div>
         </div>
 
-        <div class="col-md-12">
+        <!-- <div class="col-md-12">
 
             <div class="form-group">
 
@@ -99,7 +88,7 @@
 
             </div>
 
-        </div>
+        </div> -->
       <!-- _____ GRUPO 2 _____ -->
 
       <div class="col-md-12">
@@ -130,25 +119,22 @@
 
           "columns" => array(
             "referencia" => array(
-              "label" => "Referencia"
+              "label" => "Pañol"
             ),
             "codigo" => array(
-              "label" => "Cod. Artículo"
+              "label" => "Establecimiento"
             ),
             "descripcion" => array(
-              "label" => "Descrip."
+              "label" => "Responsable"
             ),
             "lote" => array(
-              "label" => "Lote"
+              "label" => "Código"
             ),
             "cantidad" => array(
-              "label" => "Cantidad"
+              "label" => "Herramienta"
             ),
             "stock_actual" => array(
-              "label" => "Stock"
-            ),
-            "deposito" => array(
-              "label" => "Depósito"
+              "label" => "Tipo"
             ),
             array(
               "label" => "Fecha",
@@ -158,9 +144,6 @@
                 return $row["fec_alta"];
               },
               "type" => "date"
-            ),
-            "tipo_mov" => array(
-              "label" => "Tipo Movim."
             )
           ),
           "cssClass" => array(
@@ -183,12 +166,13 @@
   //variables que van a mantener el estado para poder generar el excel
   var fec1;var fec2;var tpoMov;var esta;var depo;var artic;var lote;
 
-  // carga select de Establecimientos, componente Articulos y llama configuracion selects de fecha
+  // carga select de Panoles, componente Articulos y llama configuracion selects de fecha
   $(function() {
     $(".habilitado").hide();
     wo();
-    $("#list_articulos").load("<?php echo base_url(ALM); ?>Reportes/cargaArticulos");
-    getEstablecimientos();
+    // $("#list_responsables").load("<?php echo base_url(PAN); ?>Reportes/cargaResponsables");
+    getPanoles();
+    getResponsables();
     fechaMagic();
     //getTipoAjuste();
     wc();
@@ -215,60 +199,83 @@
     );
   }
 
-  // llena select Establecimientos
-  function getEstablecimientos(){
-
+  // llena select Panoles
+  function getPanoles(){
     $.ajax({
         type: 'POST',
         dataType: 'json',
         data: {},
-        url: 'index.php/<?php echo ALM?>Reportes/getEstablecimientos',
+        url: 'index.php/<?php echo PAN?>Reportes/getPanoles',
         success: function(data) {
-
-            $('#establecimiento').empty();
-            $("#establecimiento").append("<option value='-1' disabled selected>-Seleccione Establecimiento...-</option");
+            $('#panol').empty();
+            $("#panol").append("<option value='-1' disabled selected>-Seleccione Pañol...-</option");
             if(data != null){
                 for(var i=0; i<data.length; i++)
                 {
-                  $('#establecimiento').append("<option value='" + data[i].esta_id + "'>" +data[i].nombre+"</option");
+                  $('#panol').append("<option value='" + data[i].pano_id + "'>" +data[i].nombre+"</option");
                 }
-                //$("#establecimiento").removeAttr('readonly');
+                //$("#panol").removeAttr('readonly');
             }else{
-                $("#establecimiento").append("<option value=''>-Sin Establecimientos-</option");
+                $("#panol").append("<option value=''>-Sin Pañoles-</option");
             }
             WaitingClose();
         },
         error: function(data) {
-
             alert('Error');
         }
     });
   }
 
-  // carga los depositos de acuerdo a establecimiento
-	function seleccionesta(opcion){
+  // llena select Responsables
+  function getResponsables(){
+    $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        data: {},
+        url: 'index.php/<?php echo PAN?>Reportes/cargaResponsables',
+        success: function(data) {
+            $('#responsable').empty();
+            $("#responsable").append("<option value='-1' disabled selected>-Seleccione Responsable...-</option");
+            if(data != null){
+                for(var i=0; i<data.length; i++)
+                {
+                  $('#responsable').append("<option value='" + data[i].id + "'>" +data[i].last_name+" "+data[i].first_name + "</option>");
+                }
+                //$("#responsable").removeAttr('readonly');
+            }else{
+                $("#responsable").append("<option value=''>-Sin Responsables-</option");
+            }
+            WaitingClose();
+        },
+        error: function(data) {
+            alert('Error');
+        }
+    });
+  }
+
+  // carga los depositos de acuerdo a panol
+	function seleccionpano(opcion){
 
     $(".habilitado").show();
 
     wo();
-    var id_esta = $("#establecimiento").val();
+    var id_panol = $("#panol").val();
     $.ajax({
         type: 'POST',
-        data: {id_esta},
-        url: 'index.php/<?php echo ALM?>Reportes/traerDepositos',
+        data: {id_panol},
+        url: 'index.php/<?php echo PAN?>Reportes/traerHerramientas',
         success: function(data) {
-
             var resp = JSON.parse(data);
-            $('#depo_id').empty();
-            $("#depo_id").append("<option value='TODOS'>Todos</option");
+            $('#herr_id').empty();
+            $("#herr_id").append("<option value='TODOS'>Todos</option");
             if(data != null){
                 for(var i=0; i<resp.length; i++)
                 {
-                  $('#depo_id').append("<option value='" + resp[i].depo_id + "'>" +resp[i].descripcion+"</option");
+                  $('#herr_id').append("<option value='" + resp[i].herr_id + "'>" +resp[i].codigo+"</option");
                 }
-                $("#depo_id").removeAttr('readonly');
+                $("#herr_id").removeAttr('readonly');
             }else{
-                $("#depo_id").append("<option value=''>-Sin Depósitos para este Establecimiento-</option");
+                $("#herr_id").append("<option value=''>-Sin Herramientas para este Pañol-</option");
             }
             wc();
         },
