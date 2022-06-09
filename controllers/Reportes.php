@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-require APPPATH . '/modules/'.ALM."reports/historico_articulos/Historico_articulos.php";
+require APPPATH . '/modules/'.PAN."reports/historico_panoles/Historico_panoles.php";
 require APPPATH . '/modules/'.ALM."reports/articulos_vencidos/Articulos_vencidos.php";
 require_once('vendor/autoload.php');
 
@@ -18,46 +18,51 @@ class Reportes extends CI_Controller
   public function __construct()
   {
     parent::__construct();
-    $this->load->model(ALM.'koolreport/Koolreport');
-    $this->load->model(ALM.'koolreport/Opcionesfiltros');
+    $this->load->model(PAN.'koolreport/Koolreport');
+    $this->load->model(PAN.'koolreport/Opcionesfiltros');
+    $this->load->model(PAN.'Herramientas');
 		$this->load->model(ALM.'traz-comp/Componentes');
-    $this->load->model(ALM.'general/Establecimientos');
+    // $this->load->model(ALM.'general/Establecimientos');
     $this->load->model(ALM.'general/Tipoajustes');
+    $this->load->model('core/Establecimientos');
   }
 
   /**
-  * Devuelve array con establecimientos por empresa
+  * Devuelve array con pañoles por empresa
   * @param
-  * @return array con listado de establecimientos
+  * @return array con listado de pañoles
   */
-  public function getEstablecimientos()
+  public function getPanoles()
   {
-    $estab = $this->Establecimientos->listar();
-    $data = $estab->establecimientos->establecimiento;
+    $pano = $this->Establecimientos->getPanoles();
+    $data = $pano->panoles->panol;
     echo json_encode($data);
   }
 
   /**
-	* Trae listado de depositos por id de Estabelcimiento
-	* @param int id establecimiento
-	* @return array listado de depositos
+	* Trae listado de herramientas por id de Pañol
+	* @param int id pañol
+	* @return array listado de herramientas
 	*/
-	public function traerDepositos()
+	public function traerHerramientas()
 	{
-		$id = $this->input->post('id_esta');
-		$resp = $this->Establecimientos->obtenerDepositos($id);
-		echo json_encode($resp->depositos->deposito);
+		$pano_id = $this->input->post('id_panol');
+		$resp = $this->Herramientas->obtenerHerramientasPanol($pano_id);
+		echo json_encode($resp->herramientas->herramienta);
 	}
 
   /**
-  * Trae listado de articulos
+  * Trae listado de responsables
   * @param
-  * @return array con listado de articulos
+  * @return array con listado de responsables
   */
-  function cargaArticulos()
+  function cargaResponsables()
   {     
-    $data['items'] = $this->Componentes->listaArticulos();
-    $this->load->view(ALM.'articulo/componente',$data);
+    // $data['items'] = $this->Establecimientos->obtenerUsuarios();
+    // $this->load->view(PAN.'responsable/componente',$data);
+    $use = $this->Establecimientos->obtenerUsuarios();
+    $data = $use->usuarios->usuario;
+    echo json_encode($data);
   }
 
 	/**
@@ -74,16 +79,16 @@ class Reportes extends CI_Controller
 	}
 
   /**
-  * - Levanta vista reporte de Historico de articulos
+  * - Levanta vista reporte de Historico de panoles
   * - Recarga con datos filtrados
   * @param
-  * @return view historico_articulos
+  * @return view historico_panoles
   */
-  function historicoArticulos(){
+  function historicoPanol(){
 
     $data = $this->input->post('data');
-    $json = $this->Opcionesfiltros->getHistoricoArticulos($data);
-    $reporte = new Historico_articulos($json);
+    $json = $this->Opcionesfiltros->getHistoricoPanoles($data);
+    $reporte = new Historico_panoles($json);
     $reporte->run()->render();
   }
 
@@ -205,14 +210,14 @@ class Reportes extends CI_Controller
     $data['tipo_mov'] = $this->input->get('tpoMov');
     $data['lote_id'] = $this->input->get('lote');
 
-    $json = $this->Opcionesfiltros->getHistoricoArticulos($data);
+    $json = $this->Opcionesfiltros->getHistoricoPanoles($data);
     
     $spreadsheet = new Spreadsheet(); // Creo la instancia de Spreadsheet
     $sheet = $spreadsheet->getActiveSheet(); // Me posiciono en la hoja activa
 
     //Formateo del Excel con la data de la consulta
     //Formateo titulo
-    $sheet->setCellValue('A1', 'Reporte de Artículos Vencidos');
+    $sheet->setCellValue('A1', 'Reporte de Pañoles');
     $sheet->getStyle('A1')->getFont()->setSize(20);
     $sheet->getStyle('A1')->getFont()->setBold(true);
     $sheet->getStyle('A1:C1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('B4C6E7');

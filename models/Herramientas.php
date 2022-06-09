@@ -111,4 +111,13 @@ class Herramientas extends CI_Model
 			return $aux;
 		}
 
+		public function obtenerHerramientasPanol($pano_id)
+		{
+			$estado = 'TODOS';
+			$url = REST_PAN.'/herramientas/panol/'.$pano_id.'/estado/'.$estado;
+			$array = $this->rest->callAPI("GET",$url);
+			$resp =  json_decode($array['data']);
+			return $resp;
+		}
+
 }

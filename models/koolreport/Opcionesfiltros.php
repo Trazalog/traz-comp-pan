@@ -33,9 +33,9 @@ class Opcionesfiltros extends CI_Model
   * @param array parametros para filtrar la lista
   * @return array con datos filtrados
   */
-  function getHistoricoArticulos($data)
+  function getHistoricoPanoles($data)
   {
-    log_message('DEBUG','#TRAZA|TRAZ-COMP-ALMACENES|OPCIONESFILTROS|getHistoricoArticulos($data)| $data: >> '.json_encode($data));
+    log_message('DEBUG','#TRAZA|TRAZ-COMP-PANOLES|OPCIONESFILTROS|getHistoricoPanoles($data)| $data: >> '.json_encode($data));
     $desde = date("Y-m-d", strtotime($data["desde"]));
     $hasta = date("Y-m-d", strtotime($data["hasta"]));
     $depo_id = $data["depo_id"];
