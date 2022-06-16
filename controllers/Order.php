@@ -88,7 +88,9 @@ class Order extends CI_Controller {
 	function guardar()
 	{
 		$cabecera = $this->input->post('datos');
-		$cabecera['empr_id'] = empresa();
+		// $cabecera['empr_id'] = empresa();
+		// $cabecera['usuario_app'] = userNick();
+		// $cabecera['responsable'] = userNick();
 		$herram = json_decode($this->input->post('tools'));
 		log_message('DEBUG','#TRAZA|TRAZ-COMP-PAN|ORDER|GUARDAR $herram: >> '.json_encode($this->input->post($herram)));
 
