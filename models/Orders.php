@@ -91,8 +91,14 @@ class Orders extends CI_Model {
 	*/
 	function guardar($cabecera)
 	{
-
-		$post['_postpanol_salida_herramientas'] = $cabecera;
+		$salida['empr_id'] = empresa();
+		$salida['usuario_app'] = userNick();
+		$salida['responsable'] = userNick();
+		$salida['pano_id'] = $cabecera['pano_id'];
+		$salida['comprobante'] = $cabecera['comprobante'];
+		$salida['destino'] = $cabecera['destino'];
+		$salida['observaciones'] = $cabecera['observaciones'];
+		$post['_post_panol_salida_herramientas'] = $salida;
 		log_message('DEBUG','#TRAZA|ORDERS|GUARDAR($herram) $herram:  >> '.json_encode($post));
 		$aux = $this->rest->callAPI("POST", REST_PAN."/panol/salida/herramientas", $post);
 		$aux =json_decode($aux["data"]);
