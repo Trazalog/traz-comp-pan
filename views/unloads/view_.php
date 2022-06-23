@@ -409,19 +409,14 @@ function validarCampos(form){
 }
 
 function guardar(){
-
   if( !validarCampos('frm_entrada') ){
     return;
   }
-  alert("paso a guardar");
-  return;
-
   wo();
   var form = $('#frm_entrada')[0];
   var datos = new FormData(form);
   var datos = formToObject(datos);
   datos.pano_id = $("#pano_id option:selected").val();
-
   var herr = "";
   var herramientas = [];
   $('#tablalistherram td.herram').each(function() {
@@ -429,15 +424,12 @@ function guardar(){
       herramientas.push(herr);
   });
   var tools = JSON.stringify(herramientas);
-
   $.ajax({
       type: 'POST',
       data:{datos, tools},
       url: 'index.php/<?php echo PAN ?>Unload/guardar',
       success: function(result) {
-
         $("#cargar_tabla").load("<?php echo base_url(PAN); ?>Unload/listarEntradas");
-
         $("#boxDatos").hide(500);
         $("#frm_salida")[0].reset();
         $("#botonAgregar").removeAttr("disabled");
