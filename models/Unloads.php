@@ -84,8 +84,15 @@ class Unloads extends CI_Model {
 		*/
 		function guardar($cabecera)
 		{
-
-			$post['_postpanol_entrada_herramientas'] = $cabecera;
+			$entrada['empr_id'] = empresa();
+			$entrada['usuario_app'] = userNick();
+			$entrada['responsable'] = userNick();
+			$entrada['pano_id'] = $cabecera['pano_id'];
+			$entrada['comprobante'] = $cabecera['comprobante'];
+			$entrada['destino'] = $cabecera['destino'];
+			$entrada['observaciones'] = $cabecera['observaciones'];
+			$post['_post_panol_entrada_herramientas'] = $entrada;
+			// $post['_postpanol_entrada_herramientas'] = $cabecera;
 			log_message('DEBUG','#TRAZA|TRAZ-COMP-PANOL|UNLOADS|GUARDAR($herram) $post:  >> '.json_encode($post));
 			$aux = $this->rest->callAPI("POST", REST_PAN."/panol/entrada/herramientas", $post);
 			$aux =json_decode($aux["data"]);
