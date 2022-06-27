@@ -415,7 +415,7 @@ function guardar(){
   });
 }
 
-DataTable($('#tablalistherram'));
+// DataTable($('#tablalistherram'));
 
 // configuracion select2
 $("#tools").select2({
