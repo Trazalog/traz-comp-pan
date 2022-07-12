@@ -1,18 +1,9 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
+require APPPATH . '/modules/'.PAN."reports/Primer_Reporte.php";
 require APPPATH . '/modules/'.PAN."reports/historico_panoles/Historico_panoles.php";
-require APPPATH . '/modules/'.ALM."reports/articulos_vencidos/Articulos_vencidos.php";
-require_once('vendor/autoload.php');
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
-/**
-* - Controller general para todos los reportes del submodulo
-*
-* @autor Hugo Gallardo
-*/
 class Reportes extends CI_Controller
 {
   public function __construct()
@@ -21,9 +12,6 @@ class Reportes extends CI_Controller
     $this->load->model(PAN.'koolreport/Koolreport');
     $this->load->model(PAN.'koolreport/Opcionesfiltros');
     $this->load->model(PAN.'Herramientas');
-		$this->load->model(ALM.'traz-comp/Componentes');
-    // $this->load->model(ALM.'general/Establecimientos');
-    $this->load->model(ALM.'general/Tipoajustes');
     $this->load->model('core/Establecimientos');
   }
 
@@ -65,213 +53,179 @@ class Reportes extends CI_Controller
     echo json_encode($data);
   }
 
-	/**
-	* Trae lotes de un articulo en un determinado deposito
-	* @param strin art_id y depo_id
-	* @return array con info de lotes encontrados
-	*/
-	public function traerLotes(){
-
-		$arti_id = $this->input->post('arti_id');
-		$depo_id = $this->input->post('depo_id');
-		$resp = $this->Opcionesfiltros->traerLotes($arti_id, $depo_id);
-		echo json_encode($resp);
-	}
-
-  /**
-  * - Levanta vista reporte de Historico de panoles
-  * - Recarga con datos filtrados
-  * @param
-  * @return view historico_panoles
-  */
-  function historicoPanol(){
-
-    $data = $this->input->post('data');
-    $json = $this->Opcionesfiltros->getHistoricoPanoles($data);
-    $reporte = new Historico_panoles($json);
-    $reporte->run()->render();
-  }
-
-
-  /**
-  * - Trae tipos de articulos
-  * @param
-  * @return array con tipos de articulos
-  */
-  function getTiposArticulos()
+  public function historicoPanol()
   {
-    $this->load->model(ALM.'general/Tablas');
-    $resp = $this->Tablas->getTabla('tipo_articulo');
-    echo json_encode($resp);
+    $data = $this->input->post('data');
+    $tipo_mov = $data['tipo_mov'];
+    $panol = $data['panol'];
+    $herramienta = $data['herramienta'];
+    $responsable = $data['responsable'];
+    $desde = $data['datepickerDesde'];
+    $hasta = $data['datepickerHasta'];
+
+    if ($tipo_mov || $panol || $herramienta || $responsable || $desde || $hasta) {
+      $desde = ($desde) ? date("d-m-Y", strtotime($desde)) : null;
+      $hasta = ($hasta) ? date("d-m-Y", strtotime($hasta)) : null;
+      
+      log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | historicoPanol() | #ETAPA: >>' . $etapa . '#DESDE: >>' . $desde . '#HASTA: >>' . $hasta);
+
+      $url = REST_PRD_ETAPAS . '/herramientas/panol/' . $etapa . '/desde/' . $desde . '/hasta/' . $hasta . '/producto/' . $producto.'/empr_id/'.empresa();
+      $json = $this->Koolreport->depurarJson($url)->productos->producto;
+      $reporte = new Historico_panoles($json);
+      $reporte->run()->render();
+      
+    } else {
+
+      log_message('INFO', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | historicoPanol() | #INGRESO');
+      
+      $url = REST_PRD_ETAPAS . '/herramientas/panol//desde//hasta//producto//empr_id/'.empresa();
+      $json = $this->Koolreport->depurarJson($url)->productos->producto;
+
+      log_message('INFO', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | historicoPanol() | #JSON: >>' . json_encode($json));
+
+      $reporte = new Historico_panoles($json);
+      $reporte->run()->render();
+      
+    }
   }
 
-  /**
-  * - Levanta vista reporte de Articulos Vencidos
-  * - Recarga vista con datos filtrados
-  * @param
-  * @return view articulos Vencidos
-  */
-  function articulosVencidos()
-  {     
-    log_message('INFO','#TRAZA|REPORTES|articulosVencidos() >> ');
+  public function prodResponsable()
+  {
     $data = $this->input->post('data');
-    $json = $this->Opcionesfiltros->getArticulosVencidos($data);
-    $reporte = new Articulos_vencidos($json);
+    $responsable = $data['responsable'];
+    $producto = $data['producto'];
+    $etapa = $data['etapa'];
+    $desde = $data['datepickerDesde'];
+    $hasta = $data['datepickerHasta'];
+
+    if ($responsable || $producto || $etapa || $desde || $hasta) {
+      $desde = ($desde) ? date("d-m-Y", strtotime($desde)) : null;
+      $hasta = ($hasta) ? date("d-m-Y", strtotime($hasta)) : null;
+
+      log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | prodResponsable() | #ETAPA: >>' . $etapa . '#DESDE: >>' . $desde . '#HASTA: >>' . $hasta . '#PRODUCTO: >>' . $producto);
+
+      $url = REST_TDS . '/productos/recurso/' . $responsable . '/etapa/' . $etapa . '/desde/' . $desde . '/hasta/' . $hasta . '/producto/' . $producto;
+      $json = $this->Koolreport->depurarJson($url)->productos->producto;
+      $reporte = new Prod_Responsable($json);
+      $reporte->run()->render();
+
+    } else {
+      log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | prodResponsable() | #INGRESO');
+
+      $url = REST_TDS . '/productos/recurso//etapa//desde//hasta//producto/';
+      $json = $this->Koolreport->depurarJson($url)->productos->producto;
+
+      log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | prodResponsable() | #JSON: >>' . $json);
+      $reporte = new Prod_Responsable($json);
+      $reporte->run()->render();
+    }
+
+  }
+
+  public function filtroProduccion()
+  {
+    log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | filtroProduccion() | #INGRESO');
+    // $url['responsables'] = '';
+    $url['articulos'] = REST_PRD_ETAPAS . '/articulos/'.empresa();
+    // $url['unidades_medida'] = '';
+    $url['etapas'] = REST_PRD_ETAPAS . '/etapas';
+
+    // $valores['responsables'] = $this->Koolreport->depurarJson($url['responsables'])->responsables->responsable;
+    $valores['articulos'] = $this->Koolreport->depurarJson($url['articulos'])->articulos->articulo;
+    // $valores['unidades_medida'] = $this->Koolreport->depurarJson($url['unidades_medida'])->unidades->unidad;
+    $valores['etapas'] = $this->Koolreport->depurarJson($url['etapas'])->etapas->etapa;
+
+    // $data['filtro'] = $this->Opcionesfiltros->filtrosProduccion($valores);
+
+    // $data['calendarioDesde'] = true;
+    // $data['calendarioHasta'] = true;
+    // $data['op'] = "produccion";
+
+    // $this->load->view(PRD.'layout/Filtro', $data);
+    echo json_encode($valores);
+  }
+
+  public function filtroProdResponsable()
+  {
+    log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | filtroProdResponsable() | #INGRESO');
+    $url['responsables'] = REST_TDS . '/recursos/list';
+    $url['productos'] = REST_TDS . '/productos/list';
+    // $url['unidades_medida'] = '';
+    $url['etapas'] = REST_TDS . '/etapas/all/list';
+
+    $valores['responsables'] = $this->Koolreport->depurarJson($url['responsables'])->recursos->recurso;
+    $valores['productos'] = $this->Koolreport->depurarJson($url['productos'])->productos->producto;
+    // $valores['unidades_medida'] = $this->Koolreport->depurarJson($url['unidades_medida'])->unidades->unidad;
+    $valores['etapas'] = $this->Koolreport->depurarJson($url['etapas'])->etapas->etapa;
+
+    // $data['filtro'] = $this->Opcionesfiltros->filtrosProdResponsable($valores);
+
+    // $data['calendarioDesde'] = true;
+    // $data['calendarioHasta'] = true;
+    // $data['op'] = 'prodResponsable';
+
+    // $this->load->view(PRD.'layout/Filtro', $data);
+    echo json_encode($valores);
+  }
+
+  public function ingresos()
+  {
+    log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | ingresos() | #INGRESO');
+    $data = $this->input->post('data');
+    $json = $this->Opcionesfiltros->getIngresos($data);
+    $reporte = new Ingresos($json);
     $reporte->run()->render();
   }
 
-   /**
-  * - Genera Archivo Excel con la data filtrada en la vista
-  * - Descarga el excel automaticamente
-  * @param
-  * @return view articulos Vencidos
-  */
-  public function excelTest() {
-
-    // $data = $this->input->post("data");
-    $data['desde'] = $this->input->get('fec1');
-    $data['hasta'] = $this->input->get('fec2');
-    $data['depo_id'] = $this->input->get('depo');
-    $data['arti_id'] = $this->input->get('arti');
-    $data['tipo'] = $this->input->get('tpoArt');
-    $data['estado'] = $this->input->get('estado'); //FALTA EN LA CONSULTA
-
-    log_message('DEBUG','#TRAZA|REPORTES|excelTest() >> '. json_encode($data));
-    $json = $this->Opcionesfiltros->getArticulosVencidos($data);
-    
-
-    $spreadsheet = new Spreadsheet(); // Creo la instancia de Spreadsheet
-    $sheet = $spreadsheet->getActiveSheet(); // Me posiciono en la hoja activa
-
-    //Formateo del Excel con la data de la consulta
-    //Formateo titulo
-    $sheet->setCellValue('A1', 'Reporte de Artículos Vencidos');
-    $sheet->getStyle('A1')->getFont()->setSize(20);
-    $sheet->getStyle('A1')->getFont()->setBold(true);
-    $sheet->getStyle('A1:D1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('B4C6E7');
-
-    
-    //Formateo Headers tabla y rellenado
-    $sheet->getStyle('A3:G3')->getFont()->setBold(true);
-    $sheet->setCellValue('A3', "Tipo de Artículo");
-    $sheet->setCellValue('B3', "Código");
-    $sheet->setCellValue('C3', "Descripción");
-    $sheet->setCellValue('D3', "Cantidad Stock");
-    $sheet->setCellValue('E3', "Fecha Vencimiento");
-    $sheet->setCellValue('F3', "Déposito");
-    $sheet->setCellValue('G3', "Estado");
-    $sheet->getColumnDimension('A')->setWidth(17);
-    $sheet->getColumnDimension('B')->setAutoSize(true);
-    $sheet->getColumnDimension('C')->setAutoSize(true);
-    $sheet->getColumnDimension('D')->setAutoSize(true);
-    $sheet->getColumnDimension('E')->setAutoSize(true);
-    $sheet->getColumnDimension('F')->setAutoSize(true);
-    $sheet->getColumnDimension('G')->setAutoSize(true);
-    $sheet->getStyle('A3:G3')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('D9D9D9');
-
-    //Relleno la Tabla
-    $i = 4;
-    foreach ($json as $key => $value) {
-      $sheet->setCellValue('A'.$i, $value->desc_tipo_articulo);
-      $sheet->setCellValue('B'.$i, $value->barcode);
-      $sheet->setCellValue('C'.$i, $value->descripcion);
-      $sheet->setCellValue('D'.$i, $value->cantidad);
-      $sheet->setCellValue('E'.$i, $value->fec_vencimiento);
-      $sheet->setCellValue('F'.$i, $value->deposito);
-      $sheet->setCellValue('G'.$i, $value->estado);
-      $i++; 
-    }
-        
-    $writer = new Xlsx($spreadsheet); // instancio Xlsx
- 
-    $filename = 'Reporte_Articulos_Vencidos'; // Nombre del archivo con el cual sera descargado
- 
-    header('Content-Type: application/vnd.ms-excel'); // generamos las cabeceras para que el navegador interprete de que tipo de archivo se trata
-    header('Content-Disposition: attachment;filename="'. $filename."_". date('d-m-Y') .'.xlsx"'); 
-    header('Cache-Control: max-age=0');
-        
-    $writer->save('php://output');	// descargamos el excel generado
+  public function cantidadIngresos()
+  {
+    log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | cantidadIngresos() | #INGRESO');
+    $data = $this->input->post('data');
+    $rsp = $this->Opcionesfiltros->getCantidadIngresos($data);
+    echo json_encode($rsp);
   }
-  
-   /**
-  * - Genera Archivo Excel con la data filtrada en la vista
-  * - Descarga el excel automaticamente
-  * - NOTA: Se genera de esta manera debido a que no se puede descargar un archivo
-  * - directamente como respuesta de un ajax porque infringe politicas de seguridad
-  * @param
-  * @return view Historico Articulos
-  */
-  public function exportarExcelHistorico() {
 
-    $data['desde'] = $this->input->get('fec1');
-    $data['hasta'] = $this->input->get('fec2');
-    $data['depo_id'] = $this->input->get('depo');
-    $data['arti_id'] = $this->input->get('arti');
-    $data['tipo_mov'] = $this->input->get('tpoMov');
-    $data['lote_id'] = $this->input->get('lote');
-
-    $json = $this->Opcionesfiltros->getHistoricoPanoles($data);
+  public function filtroIngresos()
+  {
+    log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | filtroIngresos() | #INGRESO');
+    $rsp['proveedores'] = $this->Opcionesfiltros->getProveedores();
+    $rsp['transportista'] = $this->Opcionesfiltros->getTransportistas();
+    $rsp['productos'] = $this->Opcionesfiltros->getProductos();
+    $rsp['u_medidas'] = $this->Opcionesfiltros->getMedidas();
     
-    $spreadsheet = new Spreadsheet(); // Creo la instancia de Spreadsheet
-    $sheet = $spreadsheet->getActiveSheet(); // Me posiciono en la hoja activa
+    echo json_encode($rsp);
+  }
 
-    //Formateo del Excel con la data de la consulta
-    //Formateo titulo
-    $sheet->setCellValue('A1', 'Reporte de Pañoles');
-    $sheet->getStyle('A1')->getFont()->setSize(20);
-    $sheet->getStyle('A1')->getFont()->setBold(true);
-    $sheet->getStyle('A1:C1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('B4C6E7');
+  public function asignacionDeRecursos()
+  {
+    log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | asignacionDeRecursos | #INGRESO');
+    $data = $this->input->post('data');
+    $json = $this->Opcionesfiltros->asignacionDeRecursos($data);
+    $reporte = new Asignacion_de_recursos($json);
+    $reporte->run()->render();
+  }
 
-    
-    //Formateo Headers tabla y rellenado
-    $sheet->getStyle('A3:I3')->getFont()->setBold(true);
-    $sheet->setCellValue('A3', "Referencia");
-    $sheet->setCellValue('B3', "Código Artículo");
-    $sheet->setCellValue('C3', "Descripción");
-    $sheet->setCellValue('D3', "Lote");
-    $sheet->setCellValue('E3', "Cantidad");
-    $sheet->setCellValue('F3', "Stock");
-    $sheet->setCellValue('G3', "Depósito");
-    $sheet->setCellValue('H3', "Fecha");
-    $sheet->setCellValue('I3', "Tipo Movimiento");
-    $sheet->getColumnDimension('A')->setWidth(13);
-    $sheet->getColumnDimension('B')->setAutoSize(true);
-    $sheet->getColumnDimension('C')->setAutoSize(true);
-    $sheet->getColumnDimension('D')->setAutoSize(true);
-    $sheet->getColumnDimension('E')->setAutoSize(true);
-    $sheet->getColumnDimension('F')->setAutoSize(true);
-    $sheet->getColumnDimension('G')->setAutoSize(true);
-    $sheet->getColumnDimension('H')->setAutoSize(true);
-    $sheet->getColumnDimension('I')->setAutoSize(true);
-    $sheet->getStyle('A3:I3')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('D9D9D9');
+  public function filtroAsignacionDeRecursos()
+  {
+    log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | filtroAsignacionDeRecursos() | #INGRESO');
+    $rsp['lote'] = $this->Opcionesfiltros->getLotes();
+    echo json_encode($rsp);
+  }
 
-    //Relleno la Tabla
-    $i = 4;
-    foreach ($json as $key => $value) {
+  public function salidas()
+  {
+    log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | salidas() | #INGRESO');
+    $data = $this->input->post('data');
+    $json = $this->Opcionesfiltros->getSalidas($data);
+    $reporte = new Salidas($json);
+    $reporte->run()->render();
+  }
 
-      $aux = explode("T",$value->fec_alta);
-      $fecha = date("d-m-Y",strtotime($aux[0]));
-      
-      $sheet->setCellValue('A'.$i, $value->referencia);
-      $sheet->setCellValue('B'.$i, $value->codigo);
-      $sheet->setCellValue('C'.$i, $value->descripcion);
-      $sheet->setCellValue('D'.$i, $value->lote);
-      $sheet->setCellValue('E'.$i, $value->cantidad);
-      $sheet->setCellValue('F'.$i, $value->stock_actual);
-      $sheet->setCellValue('G'.$i, $value->deposito);  
-      $sheet->setCellValue('H'.$i, $fecha);
-      $sheet->setCellValue('I'.$i, $value->tipo_mov);
-      $i++; 
-    }
-        
-    $writer = new Xlsx($spreadsheet); // instancio Xlsx
- 
-    $filename = 'Reporte_Histórico_Artículos'; // Nombre del archivo con el cual sera descargado
- 
-    header('Content-Type: application/vnd.ms-excel'); // generamos las cabeceras para que el navegador interprete de que tipo de archivo se trata
-    header('Content-Disposition: attachment;filename="'. $filename."_". date('d-m-Y') .'.xlsx"'); 
-    header('Cache-Control: max-age=0');
-        
-    $writer->save('php://output');	// descargamos el excel generado
+  public function filtroSalidas()
+  {
+    log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | filtroSalidas() | #INGRESO');
+    $rsp['clientes'] = $this->Opcionesfiltros->getClientes();
+    $rsp['transportista'] = $this->Opcionesfiltros->getTransportistas();
+    echo json_encode($rsp);
   }
 }

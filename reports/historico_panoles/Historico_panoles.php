@@ -1,6 +1,6 @@
 <?php
 
-require  APPPATH . "/modules/".ALM. "/libraries/koolreport/core/autoload.php";
+require  APPPATH . "/modules/".PRD. "/libraries/koolreport/core/autoload.php";
 
 //Specify some data processes that will be used to process
 // use \koolreport\processes\Group;
@@ -8,67 +8,77 @@ use \koolreport\processes\Sort;
 use \koolreport\processes\Limit;
 // use \koolreport\processes\RemoveColumn;
 use \koolreport\processes\OnlyColumn;
-use \koolreport\processes\Custom;
 
-/**
-* Definicion de Clase, configuracion
-*
-* @autor Hugo Gallardo
-*/
+//Define the class
 class Historico_panoles extends \koolreport\KoolReport
 {
-    use \koolreport\codeigniter\Friendship;
-    /*Filtros Avanzados*/
-    /*Enlace de datos entre los parámetros del informe y los Controles de entrada */
+  // use \koolreport\clients\Bootstrap;
+  use \koolreport\codeigniter\Friendship;
+  /*Filtros Avanzados*/
+  /*Enlace de datos entre los parámetros del informe y los Controles de entrada */
+  // use \koolreport\inputs\Bindable;
+  // use \koolreport\inputs\POSTBinding;
 
-    function cacheSettings()
-    {
-			return array(
-					"ttl" => 60, //determina cuántos segundos será válido el caché
-			);
-    }
+  function cacheSettings()
+  {
+    return array(
+      "ttl" => 60, //determina cuántos segundos será válido el caché
+    );
+  }
 
-    protected function settings()    {
+  protected function settings()
+  {
+    log_message('DEBUG', '#TRAZA| #HISTORICOPANOLES| #SETTINGS');
+    $json = $this->params;
+    $data = json_encode($json);
 
-		log_message('INFO','#TRAZA|HISTORICOPANOLES|SETTINGS >> ');
-        $json = $this->params;
-        $data = json_encode($json);
+    return array(
+      "dataSources" => array(
+        "apiarray" => array(
+          "class" => '\koolreport\datasources\ArrayDataSource',
+          "dataFormat" => "associate",
+          "data" => json_decode($data, true),
+        )
+      )
+    );
 
-        return array(
-            "dataSources" => array(
-                "apiarray" => array(
-                    "class" => '\koolreport\datasources\ArrayDataSource',
-                    "dataFormat" => "associate",
-                    "data" => json_decode($data, true),
-                )
-            )
-        );
-    }
+    // $data2 = json_encode("123");
+    // return array(
+    //     "dataSources" => array(
+    //         "apiarray2" => array(
+    //             "class" => '\koolreport\datasources\ArrayDataSource',
+    //             "dataFormat" => "associate",
+    //             "data" => json_decode($data2, true),
+    //         )
+    //     )
+    // );
+  }
 
-		/**
-		* Definicion de los componentes donde se van a mostrar los datos
-		* @param
-		* @return
-		*/
-    protected function setup()
-    {
-        log_message('DEBUG', '#TRAZA| #INGRESOS|#SETUP| #INGRESO');
-        $this->src("apiarray")
-            ->pipe($this->dataStore("data_historico_table"));
+  protected function setup()
+  {
+    log_message('DEBUG', '#TRAZA| #HISTORICOPANOLES| #SETUP');
+    $this->src("apiarray")
+      // ->pipe(new OnlyColumn(array(
+      //     "titulo", "stock", "unidad_medida", "estado"
+      // )))
+      ->pipe($this->dataStore("data_produccion_table"));
 
-        $this->src("apiarray")
-            ->pipe($this->dataStore("data_salidas_pieChart"));
+    $this->src("apiarray")
+      // ->pipe(new RemoveColumn(array(
+      //     "extraInfo","unwantedColumn"
+      // )))
+      ->pipe(new OnlyColumn(array(
+        "producto", "cantidad"
+      )))
+      ->pipe($this->dataStore("data_produccion_pieChart"));
 
-        $this->src("apiarray")
-            ->pipe(new OnlyColumn(array(
-                "nombre", "neto"
-            )))
-            ->pipe(new Sort(array(
-                "neto" => "desc"
-            )))
-            ->pipe(new Limit(
-                array(6)
-            ))
-            ->pipe($this->dataStore("data_salidas_clumnChart"));
-    }
+    $this->src("apiarray")
+      ->pipe(new OnlyColumn(array(
+        "producto", "cantidad"
+      )))
+      ->pipe($this->dataStore("data_produccion_columnChart"));
+
+    // $this->src("apiarray2")
+    //     ->pipe($this->dataStore("ejemplo"));
+  }
 }
