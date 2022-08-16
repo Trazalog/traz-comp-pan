@@ -67,7 +67,7 @@ class Unload extends CI_Controller {
 		function guardar()
 		{
 			$cabecera = $this->input->post('datos');
-			$cabecera['empr_id'] = empresa();
+			// $cabecera['empr_id'] = empresa();
 			$herram = json_decode($this->input->post('tools'));
 			log_message('DEBUG','#TRAZA|TRAZ-COMP-PAN|ORDER|GUARDAR post >> '.json_encode($this->input->post()));
 

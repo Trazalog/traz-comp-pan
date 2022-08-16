@@ -431,21 +431,25 @@ function guardar(){
       success: function(result) {
         $("#cargar_tabla").load("<?php echo base_url(PAN); ?>Unload/listarEntradas");
         $("#boxDatos").hide(500);
-        $("#frm_salida")[0].reset();
+        // $("#frm_salida")[0].reset();
+        $("#frm_entrada")[0].reset();
         $("#botonAgregar").removeAttr("disabled");
         wc();
         alertify.success("Vale de Entrada Agregada con Exito");
       },
       error: function(result){
-        wc();
         alertify.error("Error agregando Vale de Entrada");
+        wc();
+      },
+      complete: function(){
+        wc();
       }
   });
 
 }
 
 
-DataTable($('#tablalistherram'));
+// DataTable($('#tablalistherram'));
 // configuracion select2
 $("#tools").select2({
     placeholder: "Seleccione una herramienta...",

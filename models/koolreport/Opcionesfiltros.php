@@ -1,10 +1,5 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
-/**
-* - Clase de donde se enviaran los datos necesarios para el filtrado
-* - Devuelve ademas los datos ya filtrados
-*
-* @autor Hugo Gallardo
-*/
+
 class Opcionesfiltros extends CI_Model
 {
 
@@ -15,64 +10,129 @@ class Opcionesfiltros extends CI_Model
     $this->load->helper('sesion_helper');
   }
 
-  /**
-	* Trae lotes de un articulo en un determinado deposito
-	* @param string art_id y depo_id
-	* @return array con info de lotes encontrados
-	*/
-	function traerLotes($arti_id, $depo_id){
-
-		$url = REST_ALM.'/deposito/'.$depo_id.'/articulo/'.$arti_id.'/lote/list';
-		$aux = $this->rest->callAPI("GET",$url);
-		$aux =json_decode($aux['data']);
-		return $aux->lotes->lote;
-	}
-
-  /**
-  * Develve info filtrada por parametros recibidos
-  * @param array parametros para filtrar la lista
-  * @return array con datos filtrados
-  */
-  function getHistoricoPanoles($data)
+  public function ejemplo($valores)
   {
-    log_message('DEBUG','#TRAZA|TRAZ-COMP-PANOLES|OPCIONESFILTROS|getHistoricoPanoles($data)| $data: >> '.json_encode($data));
-    $desde = date("Y-m-d", strtotime($data["desde"]));
-    $hasta = date("Y-m-d", strtotime($data["hasta"]));
-    $depo_id = $data["depo_id"];
-    $tipo = $data["tipo_mov"];
-    $arti_id = $data['arti_id'];
-    $lote_id = $data['lote_id'];
-    //http://10.142.0.13:8280/services/ALMDataService/movimientos/tipo/TODOS/desde/2021-04-01/hasta/2021-04-30/deposito/TODOS/articulo/TODOS/lote/TODOS
-    $url = '/movimientos/tipo/'.$tipo.'/desde/'.$desde.'/hasta/'.$hasta.'/deposito/'.$depo_id.'/articulo/'.$arti_id.'/lote/'.$lote_id;
-    $aux = $this->rest->callAPI("GET",REST_ALM.$url);
-    $aux =json_decode($aux["data"]);
-    return $aux->movimientos->movimiento;
+    $res =  new StdClass(); //creamos un objeto genérico vacío
+    $res->unidad = $valores['unidades_medida'];
+    $res->estado = $valores['estados'];
+
+    return $res;
   }
 
-
-
-
-  /**
-  * Devuelveino filtrada por parametros recibidos
-  * @param array con parametros para filtrar la lista
-  * @return array con datos filtrados
-  */
-  function getArticulosVencidos($data)
+  public function filtrosProduccion($valores)
   {
-    log_message('DEBUG','#TRAZA|TRAZ-COMP-ALMACENES|OPCIONESFILTROS|getArticulosVencidos($data)| $data: >> '.json_encode($data));
-    $fec1 = date("Y-m-d", strtotime($data["desde"]));
-    $fec2 = date("Y-m-d", strtotime($data["hasta"]));
-    $esta_id = $data["esta_id"];//No se usa en el service
-    $depo_id = $data["depo_id"];
-    $arti_id = $data["arti_id"];
-    $tipo = urlencode($data["tipo"]);
-    $estado = $data["estado"]; //No se usa en el service
-    
-    $url = '/lotes/articulos/'.$arti_id.'/tipo/'.$tipo.'/deposito/'.$depo_id.'/vencimiento/desde/'.$fec1.'/hasta/'.$fec2;
+    $res =  new StdClass();
+    $res->producto = $valores['productos'];
+    // $res->unidad = $valores['unidades_medida'];
+    $res->etapa = $valores['etapas'];
+    // $res->responsable = $valores['responsables'];
 
-    $aux = $this->rest->callAPI("GET",REST_ALM.$url);
-    $aux = json_decode($aux["data"]);
+    log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #OPCIONES_FILTROS | filtrosProduccion() | #PRODUCTOS: >>' . $res->producto . '#ETAPAS: >>' . $res->etapa);
+    return $res;
+  }
 
-    return $aux->lotes->lote;
+  public function filtrosProdResponsable($valores)
+  {
+    $res =  new StdClass();
+    $res->responsable = $valores['responsables'];
+    $res->producto = $valores['productos'];
+    $res->etapa = $valores['etapas'];
+
+    log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #OPCIONES_FILTROS | filtrosProdResponsable() | #REPONSABLES: >>' . $res->responsable . '#PRODUCTOS: >>' . $res->producto . '#ETAPAS: >>' . $res->etapa);
+    return $res;
+  }
+
+  public function getTransportistas()
+  {
+    $url = REST_LOG . '/transportistas/'.empresa();
+    return wso2($url)['data'];
+  }
+  /**
+	* Busca los articulos cargados en alm.alm_articulos 
+	* @param 
+	* @return array listado de articulos cargados en almacenes
+	*/
+  public function getProductos()
+  { 
+    $url = REST_PRD_ETAPAS . '/productos/list';
+    return wso2($url)['data'];
+  }
+
+  public function getProveedores()
+  {
+    $url = REST_ALM . '/proveedores/' . empresa();
+    return wso2($url)['data'];
+  }
+
+  public function getMedidas()
+  {
+    $url =  REST_CORE . '/tabla/unidades_medida/empresa/'.empresa();
+    return wso2($url)['data'];
+  }
+
+  public function getCantidadIngresos($data)
+  {
+    log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | getCantidadIngresos() | #INGRESO: >>' . json_encode($data));
+    $arti_id = (isset($data['arti_id'])) ? $data['arti_id'] : '';
+    $prov_id = (isset($data['prov_id'])) ? $data['prov_id'] : '';
+    $cuit = (isset($data['tran_id'])) ? $data['tran_id'] : '';
+    $fecdesde = (isset($data['datepickerDesde'])) ? date("Y-m-d", strtotime($data['datepickerDesde'])) : '';
+    $fechasta = (isset($data['datepickerHasta'])) ? date("Y-m-d", strtotime($data['datepickerHasta'])) : '';
+
+    $url = REST_LOG . '/cantidad/proveedor/' . $prov_id . '/transporte/' . $cuit . '/producto/' . $arti_id . '/desde/' . $fecdesde . '/hasta/' . $fechasta . '/ingresos';
+    return wso2($url)['data'];
+  }
+
+  public function getLotes()
+  {
+    $url = REST_PRD_LOTE . '/lotes/'.empresa();
+    return wso2($url)['data'];
+  }
+
+  public function getClientes()
+  {
+    $url = REST_CORE . '/clientes/porEmpresa/'.empresa().'/porEstado/ACTIVO';
+    return wso2($url)['data'];
+  }
+
+  public function asignacionDeRecursos($data)
+  {
+    log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | asignacionDeRecursos() | #INGRESO: >>' . json_encode($data));
+
+    $empr_id = empresa();
+    $lote_id = (isset($data['lote_id'])) ? $data['lote_id'] : '';
+    $desde = (isset($data['fec_desde'])) ? $data['fec_desde'] : '';
+    $hasta = (isset($data['fec_hasta'])) ? $data['fec_hasta'] : '';
+
+    $url = REST_PRD_LOTE . '/asignaciones/' . $lote_id . '/empresa/' . $empr_id . '/desde/'. $desde . '/hasta/' . $hasta; 
+
+    return wso2($url)['data'];
+  }
+
+  public function getSalidas($data)
+  {
+    log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | getSalidas() | #INGRESO: >>' . json_encode($data));
+    $arti_id = (isset($data['arti_id'])) ? $data['arti_id'] : '';
+    $clie_id = (isset($data['clie_id'])) ? $data['clie_id'] : '';
+    $cuit = (isset($data['tran_id'])) ? $data['tran_id'] : '';
+    $fecdesde = (isset($data['datepickerDesde'])) ? date("Y-m-d", strtotime($data['datepickerDesde'])) : '';
+    $fechasta = (isset($data['datepickerHasta'])) ? date("Y-m-d", strtotime($data['datepickerHasta'])) : '';
+
+    $url = REST_LOG. '/movimientos/cliente/' . $clie_id . '/transporte/' . $cuit . '/producto/' . $arti_id . '/desde/' . $fecdesde . '/hasta/' . $fechasta . '/salidas'; //TODO:comentar y descomentar el de arriba
+    return wso2($url)['data'];
+  }
+
+  public function getIngresos($data)
+  {
+    log_message('DEBUG', '#TRAZA | #TRAZ-PROD-TRAZASOFT | #REPORTES | getIngresos() | #INGRESO: >>' . json_encode($data));
+    $arti_id = (isset($data['arti_id'])) ? $data['arti_id'] : '';
+    $prov_id = (isset($data['prov_id'])) ? $data['prov_id'] : '';
+    $cuit = (isset($data['tran_id'])) ? $data['tran_id'] : '';
+    $u_medida = (isset($data['u_medida'])) ? $data['u_medida'] : '';
+    $fecdesde = (isset($data['datepickerDesde']) && $data['datepickerDesde'] != '') ? date("Y-m-d", strtotime($data['datepickerDesde'])) : '';
+    $fechasta = (isset($data['datepickerHasta']) && $data['datepickerHasta'] != '') ? date("Y-m-d", strtotime($data['datepickerHasta'])) : '';
+
+    $url = REST_LOG . '/movimientos/proveedor/' . $prov_id . '/transporte/' . $cuit . '/producto/' . $arti_id . '/u_medida/' . $u_medida . '/desde/' . $fecdesde . '/hasta/' . $fechasta . '/empresa/'. empresa() .'/ingresos';
+    return wso2($url)['data'];
   }
 }
