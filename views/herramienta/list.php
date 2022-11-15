@@ -40,7 +40,6 @@
 
   // extrae datos de la tabla
   $(".btnEditar").on("click", function(e) {
-
     $(".modal-header h4").remove();
     //guardo el tipo de operacion en el modal
     $("#operacion").val("Edit");
@@ -51,6 +50,7 @@
     habilitarEdicion();
     llenarModal(datajson);
   });
+
   // extrae datos de la tabla
   $(".btnInfo").on("click", function(e) {
     $(".modal-header h4").remove();
@@ -63,6 +63,7 @@
     blockEdicion();
     llenarModal(datajson);
   });
+
   //cambia encabezado para agregar una herramienta
   $("#btnAdd").on("click", function(e) {
     $("#operacion").val("Add");
@@ -70,9 +71,9 @@
     $(".modal-header").append('<h4 class="modal-title"  id="myModalLabel"><span id="modalAction" class="fa fa-fw fa-pencil text-light-blue"></span> Agregar Herramienta </h4>');
     ///FIXME: LIMPIAR LOS CAMPOS Y SELECTS
   });
+
   // llena modal paa edicio y muestra
   function llenarModal(datajson){
-
     $('#herr_id').val(datajson.herr_id);
     //$('#pano_id').val(datajson.pano_id);
     $('#codigo_edit').val(datajson.codigo);
@@ -82,18 +83,21 @@
     $('#marca_id_edit option[value="'+ datajson.marca_id +'"]').attr("selected",true);
     $('#pano_id_edit option[value="'+ datajson.pano_id +'"]').attr("selected",true);
   }
+
   // deshabilita botones, selects e inputs de modal
   function blockEdicion(){
     $(".habilitar").attr("readonly","readonly");
     $("#marca_id_edit").attr('disabled', 'disabled');
     $('#btnsave_edit').hide();
   }
+
   // habilita botones, selects e inputs de modal
   function habilitarEdicion(){
     $('.habilitar').removeAttr("readonly");//
     $("#marca_id_edit").removeAttr("disabled");
     $('#btnsave_edit').show();
   }
+
   // Levanta modal prevencion eliminar herramienta
   $(".btnEliminar").on("click", function() {
     $(".modal-header h4").remove();
@@ -106,10 +110,34 @@
     //levanto modal
     $("#modalaviso").modal('show');
   });
-  // Elimina herramienta
-  function eliminar(){
 
+  //Valida si la herramienta se encuentra en "Estado: Tránsito antes de eliminarla
+  function validarEstado(){
+    // var barcode = $("#artBarCode").val();
     var herr_id = $("#id_herr").val();
+    $.ajax({
+      type: "POST",
+      url: "<?php echo PAN; ?>Herramienta/validarEstado",
+      data: {herr_id},
+      dataType: "JSON",
+      success: function (rsp) {
+        if(rsp != null){
+          if(rsp.existe == 'true'){
+            error("Error","La herramienta se encuentra en TRANSITO por lo que no puede ser eliminada");
+          }else{
+            eliminar(herr_id);
+          }
+        }else{
+          error("Error","Se produjo un error validando el estado de la herramienta!");
+        }
+      }
+    });
+  }
+
+  // Elimina herramienta
+  function eliminar(herr_id){
+    // var herr_id = $("#id_herr").val();
+    // validarEstado(herr_id);
     wo();
     $.ajax({
         type: 'POST',
@@ -134,8 +162,6 @@
 
 </script>
 
-
-
 <!-- Modal aviso eliminar -->
   <div class="modal fade" id="modalaviso">
     <div class="modal-dialog" role="document">
@@ -154,7 +180,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="eliminar()">Aceptar</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="validarEstado()">Aceptar</button>
         </div>
       </div>
     </div>

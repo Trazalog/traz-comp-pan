@@ -98,8 +98,8 @@ class Herramientas extends CI_Model
 		}
 
 		/**
-		* deita edicion de herramienta
-		* @param array con info
+		* edicion de herramienta
+		* @param array con info de herramienta
 		* @return bool respuesta de servicio
 		*/
 		function editar($herram)
@@ -111,6 +111,11 @@ class Herramientas extends CI_Model
 			return $aux;
 		}
 
+		/**
+		* listado de herramientasdel pañol
+		* @param integer id de pañol
+		* @return array listado de herramientas
+		*/
 		public function obtenerHerramientasPanol($pano_id)
 		{
 			$estado = 'TODOS';
@@ -118,6 +123,19 @@ class Herramientas extends CI_Model
 			$array = $this->rest->callAPI("GET",$url);
 			$resp =  json_decode($array['data']);
 			return $resp;
+		}
+
+		/**
+		* Consulta al service si la herramienta tiene estado = TRANSITO
+		* @param integer id de la herramienta; empr_id
+		* @return array respuesta del servicio
+		*/
+		public function validarEstado($herr_id){			
+			$url = REST_PAN."/herramienta/validar/estado/". $herr_id . "/empresa/".empresa();		
+			$aux = $this->rest->callAPI("GET",$url);
+			$resp = json_decode($aux['data']);		
+			log_message('DEBUG', "#TRAZA | #TRAZ-COMP-PANOL | HERRAMIENTAS | validarEstado() >> resp ".json_encode($resp));		
+			return $resp->resultado;
 		}
 
 }

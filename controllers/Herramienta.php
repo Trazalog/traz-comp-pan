@@ -111,4 +111,16 @@ class Herramienta extends CI_Controller {
 		echo json_encode($result);
 	}
 
+	/**
+	* Recibe id de Herramienta, para validar si el estado = Transito
+	* @param integer id Herramienta
+	* @return array respuesta del servicio
+	*/
+	public function validarEstado(){
+		log_message('INFO','#TRAZA | #TRAZ-COMP-PANOL | Herramienta | validarEstado');	
+		$herr_id = $this->input->post('herr_id');
+		$resp = $this->Herramientas->validarEstado($herr_id);			
+		echo json_encode($resp);
+	}
+
 }
