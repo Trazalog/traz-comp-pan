@@ -345,24 +345,32 @@
     $.ajax({
         type: 'POST',
         data:{ datos },
-        //dataType: 'JSON',
+        dataType: 'JSON',
         url: recurso,
         success: function(result) {
-
-          $("#cargar_tabla").load("<?php echo base_url(PAN); ?>Herramienta/listarHerramientas");
           wc();
-          $("#boxDatos").hide(500);
-          $("#formHerramientas")[0].reset();
-          $("#botonAgregar").removeAttr("disabled");
-          if (operacion == "editar") {
-            alertify.success("Herramienta Editada Exitosamente");
-          }else{
-            alertify.success("Herramienta Agregada con Exito");
+          var resStr = typeof result === 'object' ? JSON.stringify(result) : String(result);
+          if (resStr.indexOf('herramientas_unique') !== -1 || resStr.indexOf('duplicate key value') !== -1) {
+            alertify.error("El código de herramienta ingresado ya existe.");
+            return;
+          }
+          if (result && result.status !== false && result !== 'false') {
+            $("#cargar_tabla").load("<?php echo base_url(PAN); ?>Herramienta/listarHerramientas");
+            $("#boxDatos").hide(500);
+            $("#formHerramientas")[0].reset();
+            $("#botonAgregar").removeAttr("disabled");
+            if (operacion == "editar") {
+              alertify.success("Herramienta Editada Exitosamente");
+            }else{
+              alertify.success("Herramienta Agregada con Éxito");
+            }
+          } else {
+            alertify.error("Error al " + (operacion == "editar" ? "editar" : "guardar") + " Herramienta");
           }
         },
         error: function(result){
           wc();
-          alertify.error("Error agregando Herramienta");
+          alertify.error("Error procesando la solicitud");
         }
     });
   }
