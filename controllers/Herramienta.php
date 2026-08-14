@@ -77,11 +77,7 @@ class Herramienta extends CI_Controller {
 		$herram['usuario_app'] = userNick();
 		$herram['empr_id'] = empresa();
 		$resp = $this->Herramientas->guardar($herram);
-		if ($resp != null) {
-			return json_encode(true);
-		} else {
-			return json_encode(false);
-		}
+		echo json_encode($resp);
 	}
 
 	/**
