@@ -22,10 +22,10 @@ class Orders extends CI_Model {
 	* @param
 	* @return array con listado de herramientas
 	*/
-    function obtenerHerramientasPanol($pano_id)
+    function obtenerHerramientasPanol()
     {
 		$estado = "ACTIVO";
-		$aux = $this->rest->callAPI("GET",REST_PAN."/herramientas/panol/".$pano_id."/estado/".$estado);
+		$aux = $this->rest->callAPI("GET",REST_PAN."/herramientas/estado/".$estado);
 		$aux =json_decode($aux["data"]);
 		$herram = $aux->herramientas->herramienta;
 		//FIXME: VER CUANDO NO TRAE NADA
@@ -95,9 +95,11 @@ class Orders extends CI_Model {
 		$salida['usuario_app'] = userNick();
 		$salida['responsable'] = userNick();
 		$salida['pano_id'] = $cabecera['pano_id'];
-		$salida['comprobante'] = $cabecera['comprobante'];
-		$salida['destino'] = $cabecera['destino'];
+		$salida['comprobante'] = '';
+		$salida['destino'] = '';
 		$salida['observaciones'] = $cabecera['observaciones'];
+		$salida['info_id'] = $cabecera['info_id'];
+
 		$post['_post_panol_salida_herramientas'] = $salida;
 		log_message('DEBUG','#TRAZA|ORDERS|GUARDAR($herram) $herram:  >> '.json_encode($post));
 		$aux = $this->rest->callAPI("POST", REST_PAN."/panol/salida/herramientas", $post);

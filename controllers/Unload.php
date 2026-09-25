@@ -108,7 +108,7 @@ class Unload extends CI_Controller {
 			$herramEst['_put_herramientas_estado'] = $est;
 			$this->Unloads->setEstadoHerramientas($herramEst);
 
-			echo json_encode(true);
+			echo json_encode($enpa_id);
 		}
 
 
