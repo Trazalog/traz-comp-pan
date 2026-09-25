@@ -16,6 +16,7 @@ class Order extends CI_Controller {
     {
 	parent::__construct();
 	$this->load->model('Orders');
+	$this->load->model('core/Valores');
 	}
 
 	/**
@@ -27,6 +28,7 @@ class Order extends CI_Controller {
     public function index($permission = null)
     {
 	$data['establecimientos'] = $this->Orders->obtenerEstablecimientos();
+    $data['form_id'] = $this->Valores->getTablaValor('configuraciones', 'formulario_salida_herramientas');
 	$this->load->view('orders/view_',$data);
 	}
 
@@ -130,6 +132,6 @@ class Order extends CI_Controller {
 		}
 		$herramEst['_put_herramientas_estado'] = $est;
 		$this->Orders->setEstadoHerramientas($herramEst);
-		echo json_encode(true);
+		echo json_encode($sapa_id);
 	}
 }

@@ -1,34 +1,30 @@
+<style>
+.frm-save {
+    display: none;
+}
+/* Estilos para alinear el formulario dinámico con los bordes principales */
+#form-dinamico .frm {
+    margin: 0;
+}
+#form-dinamico fieldset {
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+/* Quitar la sangría de los bordes externos (izq de la 1ra col y der de la última col) */
+#form-dinamico [class*="col-"]:first-child {
+    padding-left: 0;
+}
+#form-dinamico [class*="col-"]:last-child {
+    padding-right: 0;
+}
+</style>
 <!-- /// ----------------------------------- HEADER ----------------------------------- /// -->
-<div class="box box-primary animated fadeInLeft">
-			<div class="box-header with-border">
-					<h4>Entrada de Herramientas</h4>
-			</div>
-			<div class="box-body">
-					<div class="row">
-							<div class="col-md-2 col-lg-1 col-xs-12">
-									<button type="button" id="botonAgregar" class="btn btn-primary" aria-label="Left Align">
-											Agregar
-									</button><br>
-							</div>
-							<div class="col-md-10 col-lg-11 col-xs-12"></div>
-					</div>
-			</div>
-	</div>
+<!-- Eliminado para el modal -->
 <!-- /// ----------------------------------- HEADER ----------------------------------- /// -->
 
 <!---/////--- BOX 1 ---/////--->
-<div class="box box-primary animated bounceInDown" id="boxDatos" hidden>
-			<div class="box-header with-border">
-					<div class="box-tittle">
-							<h4>Detalle</h4>
-					</div>
-					<div class="box-tools pull-right border ">
-							<button type="button" id="btnclose" title="cerrar" class="btn btn-box-tool" data-widget="remove"
-									data-toggle="tooltip" title="" data-original-title="Remove">
-									<i class="fa fa-times"></i>
-							</button>
-					</div>
-			</div>
+<div class="box box-primary animated bounceInDown" id="boxDatos">
 			<!--_____________________________________________-->
 
 			<div class="box-body">
@@ -78,28 +74,14 @@
                 </div>
             </div>
 							<!--_____________________________________________-->	
-              <!--Comprobante-->
-							<div class="col-md-6 col-sm-6 col-xs-12">
-									<div class="form-group">
-											<label for="comprobante">Comprobante<strong style="color: #dd4b39">*</strong>:</label>
-											<div class="input-group date">
-													<div class="input-group-addon"><i class="glyphicon glyphicon-check"></i></div>
-                          <input type="text" class="form-control requerido" name="comprobante" id="comp" value="">
-											</div>
-									</div>
-							</div>
-              <!--_____________________________________________-->
-              <!--Destino-->
-							<div class="col-md-6 col-sm-6 col-xs-12">
-									<div class="form-group">
-											<label for="destino">Destino<strong style="color: #dd4b39">*</strong>:</label>
-											<div class="input-group date">
-													<div class="input-group-addon"><i class="glyphicon glyphicon-check"></i></div>
-                          <input type="text" class="form-control requerido" name="destino" id="dest" value="">
-											</div>
-									</div>
-							</div>
-							<!--_____________________________________________-->
+             
+              </form>
+
+              <!-- Formulario Dinámico de Recepción -->
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                  <br>
+                  <div id="form-dinamico" class="frm-new" data-form="<?php echo isset($form_id) ? $form_id : '' ?>"></div>
+              </div>
 
               <!--Observaciones-->
               <div class="col-md-12 col-sm-12 col-xs-12">
@@ -122,7 +104,7 @@
                   </select>
                 </div>
               <!--_____________________________________________-->
-              </form>
+
               <!--_________________SEPARADOR_________________-->
                   <div class="col-md-12">
                   <br>
@@ -176,63 +158,17 @@
 	</div>
 <!---/////--- FIN BOX 1---////----->
 
-
-<!---/////---BOX 2 DATATBLE ---/////----->
-<div class="box box-primary">
-		<div class="box-body">
-				<div id="example2_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
-						
-					<div class="row">
-								<div class="col-sm-6"></div>
-								<div class="col-sm-6"></div>
-						</div>
-
-						<div class="row">
-								<div class="col-sm-12 table-scroll" id="cargar_tabla">
-
-								</div>
-						</div>
-						
-				</div>
-		</div>
-	</div>
-<!---/////--- FIN BOX 2 DATATABLE---/////----->
-
-
 <script>
-
-$("#cargar_tabla").load("<?php echo base_url(PAN); ?>/Unload/listarEntradas");
-
-// muestra box de datos al dar click en boton agregar
-$("#botonAgregar").on("click", function() {
-    var aux = "";
-    $("#botonAgregar").attr("disabled", "");
-    //$("#boxDatos").removeAttr("hidden");
-    $("#boxDatos").focus();
-    $("#boxDatos").show();
+$(document).ready(function() {
+    if (typeof detectarForm === "function") {
+        detectarForm();
+    }
+    if (typeof initForm === "function") {
+        initForm();
+    }
 });
 
-// muestra box de datos al dar click en X
-$("#btnclose").on("click", function() {
-
-    //para borrar tabla;
-    // var table = $('#datos').DataTable();
-    // table.clear().draw();
-    //fin borrar tabla
-
-    // $('#formPuntos_edit').data('bootstrapValidator').resetForm();
-    // $('#formCircuitos').data('bootstrapValidator').resetForm();
-    // $("#formCircuitos")[0].reset();
-    // $('#formPuntos').data('bootstrapValidator').resetForm();
-    // $("#formPuntos")[0].reset();
-    $("#boxDatos").hide(500);
-    $("#botonAgregar").removeAttr("disabled");
-    // $('#formDatos').data('bootstrapValidator').resetForm();
-    // $("#formDatos")[0].reset();
-    // $('#selecmov').find('option').remove();
-    
-
-});
+// Botones agregar y cerrar eliminados para modal
 
 // al cambiar de establecimiento llena select con pañoles
 $("#esta_id").change(function(){
@@ -283,7 +219,7 @@ $("#pano_id").change(function(){
       cargarEncargados(pano_id);
       $.ajax({
           type: 'POST',
-          data:{pano_id: pano_id},
+          data:{},
           url: 'index.php/<?php echo PAN ?>Unload/obtenerHerramientasPanol',
           success: function(result) {
 
@@ -291,6 +227,8 @@ $("#pano_id").change(function(){
               $.each(herram, function(i,h){
                 var texto = 'Código: '+ h.herrcodigo +' - Descripción: '+ h.herrdescrip +' - Marca: '+ h.herrmarca;
                 var opc = new Option(texto, h.herrId, false, false); //crea nueva opcion sin seleccionarla
+                $(opc).attr('data-pano_id', h.pano_id);
+                $(opc).attr('data-pan_descrip', h.depositodescrip);
                 $('#tools').val(null).trigger('change');
                 $('#tools').append(opc).trigger('change');
               });
@@ -371,8 +309,8 @@ function armartablistherr(){   // inserta valores en la tabla
 // sino hay herramientas en la tabla, deshabilita boton guardar
 $(document).on("click",".btnEliminar",function(){
 
-    $('#tablalistherram').DataTable().row( $(this).closest('tr') ).remove().draw();
-    if( ! $('#tablalistherram').DataTable().data().any() ) {
+    $(this).closest('tr').remove();
+    if( $('#tablalistherram tbody tr').length === 0 ) {
       //deshabilito el boton guardar
       $(".enabDisab").attr('disabled', 'disabled');
     }
@@ -408,15 +346,35 @@ function validarCampos(form){
     return ban;
 }
 
-function guardar(){
+async function guardar(){
   if( !validarCampos('frm_entrada') ){
     return;
   }
   wo();
+
+  // 1. Guardar Formulario Dinámico
+  var info_id = null;
+  var idFormDinamico = "#" + $('.frm-new').find('form').attr('id');
+  if (idFormDinamico != "#undefined") {
+      if (!frm_validar(idFormDinamico)) {
+          wc();
+          alertify.error("Por favor, complete los campos obligatorios del formulario dinámico");
+          return;
+      }
+      info_id = await frmGuardarConPromesa($(idFormDinamico));
+      if (!info_id) {
+          wc();
+          alertify.error("Error al guardar el formulario dinámico");
+          return;
+      }
+  }
+
   var form = $('#frm_entrada')[0];
   var datos = new FormData(form);
   var datos = formToObject(datos);
   datos.pano_id = $("#pano_id option:selected").val();
+  datos.info_id = info_id;
+  datos.observaciones = $("#observ").val();
   var herr = "";
   var herramientas = [];
   $('#tablalistherram td.herram').each(function() {
@@ -429,13 +387,38 @@ function guardar(){
       data:{datos, tools},
       url: 'index.php/<?php echo PAN ?>Unload/guardar',
       success: function(result) {
-        $("#cargar_tabla").load("<?php echo base_url(PAN); ?>Unload/listarEntradas");
-        $("#boxDatos").hide(500);
-        // $("#frm_salida")[0].reset();
         $("#frm_entrada")[0].reset();
-        $("#botonAgregar").removeAttr("disabled");
+        $("#observ").val("");
         wc();
-        alertify.success("Vale de Entrada Agregada con Exito");
+        $('#mdl-back').modal('hide');
+        Swal.fire({
+            title: 'Éxito',
+            text: "Vale de Entrada agregado con éxito. ¿Desea imprimir el comprobante?",
+            type: 'success',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, imprimir',
+            cancelButtonText: 'No'
+        }).then((res) => {
+            if (res === true || res.value || res.isConfirmed) {
+                var enpa_id = (typeof result === 'string') ? result.replace(/"/g, '') : result;
+                wo();
+                $.ajax({
+                    type: 'GET',
+                    url: '<?php echo base_url(PAN); ?>Movimientoherramientas/printVale/' + enpa_id + '/ENTRADA',
+                    success: function(data) {
+                        wc();
+                        $('#mdl-back').html(data);
+                        $('#mdl-back').modal('show');
+                    },
+                    error: function() {
+                        wc();
+                        alertify.error("Error al cargar el vale");
+                    }
+                });
+            }
+        });
       },
       error: function(result){
         alertify.error("Error agregando Vale de Entrada");
@@ -457,5 +440,30 @@ $("#tools").select2({
     allowClear: true
 });
 
+$("#tools").on('select2:select', function(e) {
+    var tool_pano_id = $(this).find(':selected').data('pano_id');
+    var tool_pan_descrip = $(this).find(':selected').data('pan_descrip') || 'el Pañol de Origen';
+    var selected_pano_id = $('#pano_id').val();
+    var selected_pano_descrip = $('#pano_id option:selected').text();
+
+    if(tool_pano_id && selected_pano_id && tool_pano_id != selected_pano_id) {
+        Swal.fire({
+            title: 'Atención',
+            text: 'Esta herramienta fue Entregada en ' + tool_pan_descrip + '. ¿Esta seguro que desea recepcionarla en ' + selected_pano_descrip + '?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.value || result.isConfirmed === true || result === true) {
+                // Permite agregar
+            } else {
+                $('#tools').val(null).trigger('change');
+            }
+        });
+    }
+});
 
 </script>

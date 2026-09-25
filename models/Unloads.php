@@ -52,10 +52,10 @@ class Unloads extends CI_Model {
 		* @param
 		* @return array con listado de herramientas
 		*/
-    function obtenerHerramientasPanol($pano_id)
+    function obtenerHerramientasPanol()
     {
 			$estado = "TRANSITO";
-			$aux = $this->rest->callAPI("GET",REST_PAN."/herramientas/panol/".$pano_id."/estado/".$estado);
+			$aux = $this->rest->callAPI("GET",REST_PAN."/herramientas/estado/".$estado);
 			$aux =json_decode($aux["data"]);
 			$herram = $aux->herramientas->herramienta;
 
@@ -68,7 +68,8 @@ class Unloads extends CI_Model {
 				$tools[$i]['marca_id'] = $value->marca_id;
 				$tools[$i]['herrcodigo'] = $value->codigo;
 				$tools[$i]['tipoid'] = $value->tipo;
-				// $tools[$i]['depositodescrip'] = $value->pan_descrip;
+				$tools[$i]['pano_id'] = $value->pano_id;
+				$tools[$i]['depositodescrip'] = $value->pan_descrip;
 				// $tools[$i]['depositoId'] = $value->pano_id;
 				$tools[$i]['modelo'] = $value->modelo;
 				//$tools[$i]['estado'] = $value->estado;
@@ -91,6 +92,8 @@ class Unloads extends CI_Model {
 			$entrada['comprobante'] = $cabecera['comprobante'];
 			$entrada['destino'] = $cabecera['destino'];
 			$entrada['observaciones'] = $cabecera['observaciones'];
+			$entrada['info_id'] = $cabecera['info_id'];
+
 			$post['_post_panol_entrada_herramientas'] = $entrada;
 			// $post['_postpanol_entrada_herramientas'] = $cabecera;
 			log_message('DEBUG','#TRAZA|TRAZ-COMP-PANOL|UNLOADS|GUARDAR($herram) $post:  >> '.json_encode($post));
