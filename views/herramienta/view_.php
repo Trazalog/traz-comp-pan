@@ -154,6 +154,9 @@
 
 <!---///--- BOX ACCIONES (AGREGAR) ---///----->
 <div class="box box-primary">
+    <div class="box-header with-border">
+        <h4 class="box-title"><i class="fa fa-list"></i> Herramientas</h4>
+    </div>
     <div class="box-body" style="padding: 10px;">
         <button type="button" id="botonAgregar" class="btn btn-block btn-primary" style="width: 100px;" aria-label="Left Align">
             <i class="fa fa-plus"></i> Agregar
@@ -164,9 +167,6 @@
 
 <!---/////---BOX 2 FILTROS + DATATABLE ---/////----->
 <div class="box box-primary">
-    <div class="box-header with-border">
-        <h4 class="box-title"><i class="fa fa-list"></i> Herramientas</h4>
-    </div>
     <div class="box-body">
         <div class="row">
             <!-- Establecimiento Filtro -->
