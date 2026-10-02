@@ -85,7 +85,7 @@ class Unloads extends CI_Model {
 		*/
 		function guardar($cabecera)
 		{
-			$entrada['empr_id'] = empresa();
+			$entrada['empr_id'] = (string) empresa();
 			$entrada['usuario_app'] = userNick();
 			$entrada['responsable'] = userNick();
 			$entrada['pano_id'] = $cabecera['pano_id'];

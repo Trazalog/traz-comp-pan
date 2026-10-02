@@ -1,5 +1,5 @@
-<!-- /// ----------------------------------- HEADER ----------------------------------- /// -->
-<div class="box box-primary animated fadeInLeft">
+<!-- /// ----------------------------------- FILTROS + TABLA ----------------------------------- /// -->
+<div class="box box-primary">
     <div class="box-header with-border">
         <h3 class="box-title">Movimientos Herramientas</h3>
     </div><!-- /.box-header -->
@@ -39,27 +39,18 @@
 
         </div>
 
-    </div>
+        <hr>
+
+        <div class="row">
+            <div id="example2_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                <div class="col-sm-12 table-scroll" id="cargar_tabla">
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /.box-body -->
 </div>
-<!-- /// ----------------------------------- HEADER ----------------------------------- /// -->
-
-
-<!---/////---BOX 2 DATATBLE ---/////----->
-<div class="box box-primary">
-		<div class="box-body">
-				<div id="example2_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">						
-					<div class="row">
-								<div class="col-sm-6"></div>
-								<div class="col-sm-6"></div>
-						</div>
-						<div class="row">
-								<div class="col-sm-12 table-scroll" id="cargar_tabla">
-								</div>
-						</div>						
-				</div>
-		</div>
-	</div>
-<!---/////--- FIN BOX 2 DATATABLE---/////----->
+<!-- /// ----------------------------------- FIN FILTROS + TABLA ----------------------------------- /// -->
 
 <script>
 $("#cargar_tabla").load("<?php echo base_url(PAN); ?>Movimientoherramientas/listarMovimientos");

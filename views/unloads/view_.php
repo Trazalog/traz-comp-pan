@@ -209,36 +209,15 @@ $("#esta_id").change(function(){
   });
 });
 
-// Habilita select de herramientas al cambiar de pañol
+// Al cambiar el pañol solo se recarga la lista de encargados.
+// El combo de herramientas NO depende del pañol destino: se listan todas las
+// herramientas en tránsito de los pañoles a cargo del usuario (ver
+// cargarHerramientasEnTransito) y se pueden ingresar a cualquier pañol.
 $("#pano_id").change(function(){
       wo();
-      $('#tools').find('option').remove().trigger('change');
-      var opc = 'Seleccione una herramienta';
-      $('#tools').append(opc).trigger('change');
       var pano_id = $(this).val();
       cargarEncargados(pano_id);
-      $.ajax({
-          type: 'POST',
-          data:{},
-          url: 'index.php/<?php echo PAN ?>Unload/obtenerHerramientasPanol',
-          success: function(result) {
-
-              var herram = JSON.parse(result);
-              $.each(herram, function(i,h){
-                var texto = 'Código: '+ h.herrcodigo +' - Descripción: '+ h.herrdescrip +' - Marca: '+ h.herrmarca;
-                var opc = new Option(texto, h.herrId, false, false); //crea nueva opcion sin seleccionarla
-                $(opc).attr('data-pano_id', h.pano_id);
-                $(opc).attr('data-pan_descrip', h.depositodescrip);
-                $('#tools').val(null).trigger('change');
-                $('#tools').append(opc).trigger('change');
-              });
-              $('#tools').prop("disabled", false);
-              wc();
-          },
-          error: function(result){
-            wc();
-          }
-      });
+      wc();
 });
 
 function cargarEncargados(pano_id) {
@@ -279,13 +258,73 @@ function cargarEncargados(pano_id) {
   });
 }
 
+// Carga las herramientas en tránsito de los pañoles a cargo del usuario,
+// agrupadas por el pañol de origen para poder distinguirlas de una a otra.
+// No manda pano_id: el destino se elige aparte y no acota la lista, la
+// herramienta puede ingresar a cualquier pañol que administre el usuario.
+function cargarHerramientasEnTransito() {
+  wo();
+  $('#tools').empty();
+
+  $.ajax({
+      type: 'POST',
+      url: 'index.php/<?php echo PAN ?>Unload/obtenerHerramientasPanol',
+      success: function(result) {
+
+          var herram = JSON.parse(result) || [];
+
+          $('#tools').append(new Option('Seleccione una herramienta', '', false, false));
+
+          if (!herram.length) {
+              $('#tools').append(new Option('- No hay herramientas en tránsito -', '', false, false));
+              $('#tools').val(null).trigger('change');
+              wc();
+              return;
+          }
+
+          // un optgroup por pañol de origen
+          var grupos = {};
+          $.each(herram, function(i, h){
+              var label = h.depositodescrip || ('Pañol ' + (h.pano_id || '-'));
+              if (grupos[label] === undefined) {
+                  grupos[label] = [];
+              }
+              grupos[label].push(h);
+          });
+
+          $.each(grupos, function(label, items){
+              var grupo = $('<optgroup>').attr('label', label);
+              $.each(items, function(i, h){
+                  var texto = 'Código: ' + h.herrcodigo + ' - Descripción: ' + h.herrdescrip + ' - Marca: ' + h.herrmarca;
+                  var opc = new Option(texto, h.herrId, false, false);
+                  $(opc).attr('data-pano_id', h.pano_id);
+                  $(opc).attr('data-pan_descrip', label);
+                  grupo.append(opc);
+              });
+              $('#tools').append(grupo);
+          });
+
+          $('#tools').val(null).trigger('change');
+          wc();
+      },
+      error: function(){
+          $('#tools').empty()
+                  .append(new Option('Seleccione una herramienta', '', false, false))
+                  .append(new Option('- No se pudieron cargar las herramientas -', '', false, false))
+                  .val(null).trigger('change');
+          wc();
+      }
+  });
+}
+
 
 // Agregar Herramientas
 function armartablistherr(){   // inserta valores en la tabla
 
     //verifico que haya seleccionada una herramienta
+    // (el placeholder y el aviso de "sin herramientas" tienen value "")
     var seleccionado = $("#tools").find(':selected').val();
-    if ( seleccionado == undefined){
+    if ( !seleccionado){
       return;
     }
     //habilito btn guardar
@@ -465,5 +504,9 @@ $("#tools").on('select2:select', function(e) {
         });
     }
 });
+
+// Al abrir el modal ya se listan las herramientas en tránsito, sin necesidad
+// de elegir establecimiento ni pañol (el pañol es el destino del ingreso).
+cargarHerramientasEnTransito();
 
 </script>

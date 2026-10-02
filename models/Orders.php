@@ -38,6 +38,8 @@ class Orders extends CI_Model {
 			$tools[$i]['marca_id'] = $value->marca_id;
 			$tools[$i]['herrcodigo'] = $value->codigo;
 			$tools[$i]['tipoid'] = $value->tipo;
+			$tools[$i]['pano_id'] = $value->pano_id;
+			$tools[$i]['depositodescrip'] = $value->pan_descrip;
 			// $tools[$i]['depositodescrip'] = $value->pan_descrip;
 			// $tools[$i]['depositoId'] = $value->pano_id;
 			$tools[$i]['modelo'] = $value->modelo;
@@ -91,7 +93,7 @@ class Orders extends CI_Model {
 	*/
 	function guardar($cabecera)
 	{
-		$salida['empr_id'] = empresa();
+		$salida['empr_id'] =(string) empresa();
 		$salida['usuario_app'] = userNick();
 		$salida['responsable'] = userNick();
 		$salida['pano_id'] = $cabecera['pano_id'];

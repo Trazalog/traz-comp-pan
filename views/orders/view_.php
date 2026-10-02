@@ -199,7 +199,7 @@ $("#pano_id").change(function(){
     cargarEncargados(pano_id);
     $.ajax({
         type: 'POST',
-        data:{},
+        data:{pano_id: pano_id},
         url: 'index.php/<?php echo PAN ?>Order/obtenerHerramientasPanol',
         success: function(result) {
         //FIXME: VER CUANDO NO TRAE NADA

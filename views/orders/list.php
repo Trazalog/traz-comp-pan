@@ -59,7 +59,7 @@
       wo();
       $.ajax({
           type: 'GET',
-          url: '<?php echo base_url(PAN) ?>Order/printVale/' + sapa_id,
+          url: '<?php echo base_url(PAN) ?>Movimientoherramientas/printVale/' + sapa_id + '/SALIDA',
           success: function(data) {
               wc();
               $('#mdl-back').html(data);

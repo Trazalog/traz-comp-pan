@@ -27,8 +27,8 @@ class Order extends CI_Controller {
 
     public function index($permission = null)
     {
-	$data['establecimientos'] = $this->Orders->obtenerEstablecimientos();
-    $data['form_id'] = $this->Valores->getTablaValor('configuraciones', 'formulario_salida_herramientas');
+		$data['establecimientos'] = filtrarEstablecimientosPorUsuario($this->Orders->obtenerEstablecimientos());
+		$data['form_id'] = $this->Valores->getTablaValor('configuraciones', 'formulario_salida_herramientas');
 	$this->load->view('orders/view_',$data);
 	}
 
@@ -40,7 +40,7 @@ class Order extends CI_Controller {
 	public function obtenerPanoles()
 	{
 		log_message('INFO','#TRAZA|TRAZ-COMP-PANOL|HERRAMIENTAS|OBTENERPANOLES >> ');
-		$resp = $this->Orders->obtenerPanoles($this->input->post('esta_id'));
+		$resp = filtrarPanolesPorUsuario($this->Orders->obtenerPanoles($this->input->post('esta_id')));
 		echo json_encode($resp);
 	}
 
@@ -65,7 +65,14 @@ class Order extends CI_Controller {
 	{
 		log_message('INFO','#TRAZA|| >> ');
 		$pano_id = $this->input->post('pano_id');
-		$resp = $this->Orders->obtenerHerramientasPanol($pano_id);
+		// el select de panoles ya viene filtrado, esto evita que un POST
+		// directo pida herramientas de un panol que el usuario no maneja
+		if ( !usuarioManejaPano($pano_id) ) {
+			log_message('ERROR','#TRAZA|TRAZ-COMP-PAN|ORDER|OBTENERHERRAMIENTASPANOL >> pano_id '.$pano_id.' no asignado al usuario');
+			echo json_encode(array());
+			return;
+		}
+		$resp = filtrarHerramientasPorPano($this->Orders->obtenerHerramientasPanol());
 		echo json_encode($resp);
 	}
 

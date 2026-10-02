@@ -23,24 +23,6 @@
 }
 
 </style>
-<!-- /// ---- HEADER ----- /// -->
-<div class="box box-primary animated fadeInLeft">
-			<div class="box-header with-border">
-					<h4>Herramientas</h4>
-			</div>
-			<div class="box-body">
-					<div class="row">
-							<div class="col-md-2 col-lg-1 col-xs-12">
-									<button type="button" id="botonAgregar" class="btn btn-primary" aria-label="Left Align">
-											Agregar
-									</button><br>
-							</div>
-							<div class="col-md-10 col-lg-11 col-xs-12"></div>
-					</div>
-			</div>
-	</div>
-<!-- /// ----- HEADER -----/// -->
-
 <!---///--- BOX 1 ---///----->
 <div class="box box-primary animated bounceInDown" id="boxDatos" hidden>
     <div class="box-header with-border">
@@ -170,10 +152,20 @@
 </div>
 <!---///--- FIN BOX 1 ---///----->
 
-<!---/////--- BOX FILTROS ---/////----->
-<div class="box box-default animated fadeInDown" id="boxFiltros">
+<!---///--- BOX ACCIONES (AGREGAR) ---///----->
+<div class="box box-primary">
+    <div class="box-body" style="padding: 10px;">
+        <button type="button" id="botonAgregar" class="btn btn-block btn-primary" style="width: 100px;" aria-label="Left Align">
+            <i class="fa fa-plus"></i> Agregar
+        </button>
+    </div>
+</div>
+<!---///--- FIN BOX ACCIONES (AGREGAR) ---///----->
+
+<!---/////---BOX 2 FILTROS + DATATABLE ---/////----->
+<div class="box box-primary">
     <div class="box-header with-border">
-        <h4><i class="fa fa-filter"></i> Filtros</h4>
+        <h4 class="box-title"><i class="fa fa-list"></i> Herramientas</h4>
     </div>
     <div class="box-body">
         <div class="row">
@@ -240,24 +232,17 @@
                             <i class="fa fa-eraser"></i> Limpiar
                         </button>
                     </div>
-                    
                 </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-12 table-scroll" id="cargar_tabla">
             </div>
         </div>
     </div>
 </div>
-<!---/////--- FIN BOX FILTROS ---/////----->
-
-<!---/////---BOX 2 DATATBLE ---/////----->
-<div class="box box-primary">
-		<div class="box-body">
-				<div class="row">
-						<div class="col-sm-12 table-scroll" id="cargar_tabla">
-						</div>
-				</div>
-		</div>
-</div>
-<!---/////--- FIN BOX 2 DATATABLE---//////----->
+<!---/////--- FIN BOX 2 FILTROS + DATATABLE---//////----->
 
 <?php $this->load->view('herramienta/modals/modal_editar'); ?>
 

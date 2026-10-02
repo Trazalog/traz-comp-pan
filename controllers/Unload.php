@@ -16,7 +16,7 @@ class Unload extends CI_Controller {
 		*/
 		public function index()
 		{
-				$data['establecimientos'] = $this->Unloads->obtenerEstablecimientos();
+				$data['establecimientos'] = filtrarEstablecimientosPorUsuario($this->Unloads->obtenerEstablecimientos());
 				$this->load->view('unloads/view_',$data);
 		}
 
@@ -27,21 +27,31 @@ class Unload extends CI_Controller {
 		*/
 		public function obtenerPanoles(){
 			log_message('INFO','#TRAZA|TRAZ-COMP-PANOL|HERRAMIENTAS|OBTENERPANOLES >> ');
-			$resp = $this->Unloads->obtenerPanoles($this->input->post('esta_id'));
+			$resp = filtrarPanolesPorUsuario($this->Unloads->obtenerPanoles($this->input->post('esta_id')));
 			echo json_encode($resp);
 		}
 
 
 		/**
-		* Obtiene herramientas por pañol
-		* @param int pano_id
-		* @return array herramientas por pañol
+		* Obtiene herramientas en transito de los panoles a cargo del usuario
+		* El panol que llega por POST es el DESTINO del ingreso, por eso solo se
+		* usa para validar que sea uno de los suyos y no para filtrar la lista:
+		* la herramienta puede ingresar a cualquier panol que administre.
+		* @param int pano_id (destino, opcional)
+		* @return array herramientas en transito de los panoles del usuario
 		*/
 		function obtenerHerramientasPanol()
 		{
 			log_message('INFO','#TRAZA|| >> ');
 			$pano_id = $this->input->post('pano_id');
-			$resp = $this->Unloads->obtenerHerramientasPanol($pano_id);
+			// si manda un panol de destino tiene que ser uno a cargo del usuario,
+			// esto evita que un POST directo pida herramientas de un panol ajeno
+			if ( !empty($pano_id) && !usuarioManejaPano($pano_id) ) {
+				log_message('ERROR','#TRAZA|TRAZ-COMP-PAN|UNLOAD|OBTENERHERRAMIENTASPANOL >> pano_id '.$pano_id.' no asignado al usuario');
+				echo json_encode(array());
+				return;
+			}
+			$resp = filtrarHerramientasPorPanosDelUsuario($this->Unloads->obtenerHerramientasPanol());
 			echo json_encode($resp);
 		}
 

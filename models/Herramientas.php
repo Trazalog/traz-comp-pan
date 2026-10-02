@@ -32,7 +32,8 @@ class Herramientas extends CI_Model
 
 		/**
 		* Devuelve un listado paginado de herramientas con total_count.
-		* @param array $params  Claves: search, order_dir, page_size, start
+		* @param array $params  Claves: search, order_dir, page_size, start, pano_ids
+		* pano_ids = CSV de panoles a cargo del usuario. Vacio o ausente = sin restriccion.
 		* @return object  Contiene ->herramienta (array) y ->total (int)
 		*/
 		function listarHerramientasPaginado($params = [])
@@ -58,6 +59,9 @@ class Herramientas extends CI_Model
 			}
 			if (!empty($params['pano_id'])) {
 				$queryArgs['pano_id'] = $params['pano_id'];
+			}
+			if (!empty($params['pano_ids'])) {
+				$queryArgs['pano_ids'] = $params['pano_ids'];
 			}
 			if (!empty($params['tipo'])) {
 				$queryArgs['tipo'] = is_array($params['tipo']) ? implode(',', $params['tipo']) : $params['tipo'];

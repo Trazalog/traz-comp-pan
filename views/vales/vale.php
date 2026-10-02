@@ -6,8 +6,9 @@
         </div>
         
         <div class="modal-body" id="area-impresion">
-            <?php if (isset($data) && count($data) > 0) { 
-                $salida = $data[0]; 
+            <?php
+                $filas = (isset($data) && is_array($data)) ? $data : array();
+                $salida = !empty($filas) ? $filas[0] : null;
             ?>
             <div class="container-fluid">
                 <div class="row">
@@ -75,7 +76,7 @@
                             <tbody>
                                 <?php 
                                 $tools_vistos = array();
-                                foreach ($data as $row) { 
+                                foreach ($filas as $row) {
                                     if (in_array($row->codigoherramienta, $tools_vistos)) {
                                         continue;
                                     }
@@ -98,18 +99,11 @@
                     </div>
                 </div>
             </div>
-            <?php } else { ?>
-                <div class="alert alert-warning">
-                    No se encontraron datos para el comprobante seleccionado.
-                </div>
-            <?php } ?>
         </div>
         
         <div class="modal-footer hidden-print">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-            <?php if (isset($data) && count($data) > 0) { ?>
-                <button type="button" class="btn btn-primary" onclick="imprimirArea()">Imprimir</button>
-            <?php } ?>
+            <button type="button" class="btn btn-primary" onclick="imprimirArea()">Imprimir</button>
         </div>
     </div>
 </div>

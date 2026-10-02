@@ -62,12 +62,18 @@ class Movimientoherramientas extends CI_Controller {
             $orderDir = strtolower($order[0]['dir']);
         }
 
+        // restringe a los panoles a cargo del usuario logueado
+        // si el usuario no tiene panoles asignados ve todos
+        $pano_encargados = filtrarbyPano();
+        $pano_ids = empty($pano_encargados) ? null : implode(',', $pano_encargados);
+
         $resultado = $this->Movimientosherramientas->getMovimientosPaginados(
             $empr_id,
             $search,
             $limit,
             $offset,
-            $orderDir
+            $orderDir,
+            $pano_ids
         );
 
         $recordsTotal = $resultado['total'];
@@ -111,7 +117,7 @@ class Movimientoherramientas extends CI_Controller {
 	*/
 	public function nuevaSalida()
 	{
-		$data['establecimientos'] = $this->Orders->obtenerEstablecimientos();
+		$data['establecimientos'] = filtrarEstablecimientosPorUsuario($this->Orders->obtenerEstablecimientos());
 		$data['form_id'] = $this->Valores->getTablaValor('configuraciones', 'formulario_salida_herramientas');
 		$this->load->view('movimientosherramientas/modal_salida', $data);
 	}
@@ -122,7 +128,7 @@ class Movimientoherramientas extends CI_Controller {
 	*/
 	public function nuevaRecepcion()
 	{
-		$data['establecimientos'] = $this->Unloads->obtenerEstablecimientos();
+		$data['establecimientos'] = filtrarEstablecimientosPorUsuario($this->Unloads->obtenerEstablecimientos());
 		$data['form_id'] = $this->Valores->getTablaValor('configuraciones', 'formulario_salida_herramientas');
 		$this->load->view('movimientosherramientas/modal_recepcion', $data);
 	}

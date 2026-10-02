@@ -26,10 +26,23 @@ class Herramienta extends CI_Controller {
 	public function index()
 	{
 		$data['marcas'] = $this->Herramientas->obtenerMarcas();
-		$data['establecimientos'] = $this->Herramientas->obtenerEstablecimientos();
+		$data['establecimientos'] = filtrarEstablecimientosPorUsuario($this->Herramientas->obtenerEstablecimientos());
 		$data['tipos_herramienta'] = $this->Valores->getValor('tipos_herramienta');
 		//$data['panoles'] = $this->Herramientas->obtenerPanoles();
 		$this->load->view('herramienta/view_', $data);
+	}
+
+	/**
+	* Panoles de un establecimiento que el usuario puede usar
+	* Solo los que tiene asignados, para no crear herramientas en un panol
+	* ajeno que despues no apareceria en el listado.
+	* Si no tiene panoles asignados no se restringe nada, igual que en los listados.
+	* @param esta_id establecimiento seleccionado
+	* @return array de objetos {pano_id, nombre, ...}
+	*/
+	private function obtenerPanolesDelUsuario($esta_id)
+	{
+		return filtrarPanolesPorUsuario($this->Herramientas->obtenerPanoles($esta_id));
 	}
 
 	/**
@@ -95,6 +108,11 @@ class Herramienta extends CI_Controller {
 		$tipo        = $this->input->post('tipo') ?: $this->input->get('tipo');
 		$cert_vencer = $this->input->post('cert_vencer') ?: $this->input->get('cert_vencer');
 
+		// restringe a los panoles a cargo del usuario logueado
+		// si el usuario no tiene panoles asignados ve todos
+		$pano_encargados = filtrarbyPano();
+		$pano_ids = empty($pano_encargados) ? null : implode(',', $pano_encargados);
+
 		$params = [
 			'search'      => $search_val,
 			'order_dir'   => $order_dir,
@@ -102,6 +120,7 @@ class Herramienta extends CI_Controller {
 			'start'       => $start,
 			'esta_id'     => $esta_id,
 			'pano_id'     => $pano_id,
+			'pano_ids'    => $pano_ids,
 			'tipo'        => $tipo,
 			'cert_vencer' => $cert_vencer,
 		];
@@ -119,13 +138,14 @@ class Herramienta extends CI_Controller {
 	}
 
 	/**
-	* devuelve pañoles propios de una empresa
+	* devuelve los pañoles de un establecimiento que el usuario puede usar
+	* (los que tiene asignados; si no tiene ninguno, todos)
 	* @param
 	* @return array con pañoles
 	*/
 	public function obtenerPanoles(){
 		log_message('INFO','#TRAZA|TRAZ-COMP-PANOL|HERRAMIENTAS|OBTENERPANOLES >> ');
-		$resp = $this->Herramientas->obtenerPanoles($this->input->post('esta_id'));
+		$resp = $this->obtenerPanolesDelUsuario($this->input->post('esta_id'));
 		echo json_encode($resp);
 	}
 
@@ -158,7 +178,7 @@ class Herramienta extends CI_Controller {
 		$data['modelo']      = $herram['modelo'];
 		$data['marca']       = $herram['marca'];
 		$data['usuario_app'] = userNick();
-		$data['empr_id']     = $empr_id;
+		$data['empr_id']     =  (string) $empr_id;
 
 		// Obtener TODOS los tipos
 		$tipos = [];
@@ -226,7 +246,7 @@ class Herramienta extends CI_Controller {
 		$data['modelo']      = $herram['modelo'];
 		$data['marca']       = $herram['marca'];
 		$data['usuario_app'] = userNick();
-		$data['empr_id']     = empresa();
+		$data['empr_id']     =  (string) empresa();
 
 		$tipos = isset($herram['tipo'])
 			? (is_array($herram['tipo']) ? $herram['tipo'] : [$herram['tipo']])
@@ -681,4 +701,4 @@ class Herramienta extends CI_Controller {
 		$this->load->view(PAN.'herramienta/vista_qr_herramienta', $data);
 	}
 
-}
+}

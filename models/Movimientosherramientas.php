@@ -18,15 +18,25 @@ class Movimientosherramientas extends CI_Model
 
 
 
-		function getMovimientosPaginados($empr_id, $search, $limit, $offset, $orderDir)
+		/**
+		* Devuelve los movimientos de herramientas paginados
+		* @param string $pano_ids  CSV de panoles a cargo del usuario. Null o vacio = sin restriccion.
+		*/
+		function getMovimientosPaginados($empr_id, $search, $limit, $offset, $orderDir, $pano_ids = null)
 		{
-			$params = http_build_query(array(
+			$queryArgs = array(
 				'empr_id1'  => $empr_id,
 				'empr_id2'  => $empr_id,
 				'start'     => $offset,
 				'page_size' => $limit,
 				'search'    => $search
-			));
+			);
+
+			if (!empty($pano_ids)) {
+				$queryArgs['pano_ids'] = $pano_ids;
+			}
+
+			$params = http_build_query($queryArgs);
 
 			$url = REST_PAN . "/movimientos/herramientas?" . $params;
 

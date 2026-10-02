@@ -62,6 +62,48 @@
 </style>
 
 <script>
+
+  // -------------------------------------------------------
+  // Encabezado de los reportes (Excel / PDF / Copiar / Imprimir)
+  // Devuelve fecha de reporte + los filtros que estan aplicados
+  // en el panel de filtros de la vista (mismos ids que usa el ajax.data)
+  // -------------------------------------------------------
+  function obtenerInfoReporte() {
+      var f = new Date();
+      var fecha = (f.getDate() < 10 ? '0' : '') + f.getDate() + "/" + ((f.getMonth() + 1) < 10 ? '0' : '') + (f.getMonth() + 1) + "/" + f.getFullYear();
+
+      var partes = [];
+
+      var esta_id = $('#filtro_esta_id').val();
+      if (esta_id) {
+          var esta_txt = $('#filtro_esta_id option:selected').text();
+          if (esta_txt) partes.push('Establecimiento: ' + esta_txt);
+      }
+
+      var pano_id = $('#filtro_pano_id').val();
+      if (pano_id) {
+          var pano_txt = $('#filtro_pano_id option:selected').text();
+          if (pano_txt) partes.push('Pañol: ' + pano_txt);
+      }
+
+      var tipos = $('#filtro_tipo').val() || [];
+      if (tipos.length) {
+          var tipos_txt = [];
+          $('#filtro_tipo option:selected').each(function () {
+              tipos_txt.push($(this).text());
+          });
+          if (tipos_txt.length) partes.push('Tipo: ' + tipos_txt.join(', '));
+      }
+
+      if ($('#filtro_cert_vencer').is(':checked')) {
+          partes.push('Cert. por vencer: Sí');
+      }
+
+      return "Fecha de reporte: " + fecha + "\n" +
+             (partes.length ? "Filtros: " + partes.join(' | ') : "Filtros: Sin filtros aplicados");
+  }
+
+  // Config Tabla
   $('#tabla_herramientas').DataTable({
       "processing": true,
       "serverSide": true,
@@ -202,9 +244,7 @@
                   dt.draw();
               },
               messageTop: function () {
-                  var f = new Date();
-                  var fecha = (f.getDate() < 10 ? '0' : '') + f.getDate() + "/" + ((f.getMonth() + 1) < 10 ? '0' : '') + (f.getMonth() + 1) + "/" + f.getFullYear();
-                  return "Fecha de reporte: " + fecha;
+                  return obtenerInfoReporte();
               }
           },
           // Botón para PDF
@@ -233,9 +273,7 @@
                   dt.draw();
               },
               messageTop: function () {
-                  var f = new Date();
-                  var fecha = (f.getDate() < 10 ? '0' : '') + f.getDate() + "/" + ((f.getMonth() + 1) < 10 ? '0' : '') + (f.getMonth() + 1) + "/" + f.getFullYear();
-                  return "Fecha de reporte: " + fecha;
+                  return obtenerInfoReporte();
               },
               customize: function (doc) {
                   // Remover el título original
@@ -267,9 +305,12 @@
                       margin: [0, 0, 0, 20]
                   });
 
-                  // Ajustar messageTop (Fecha)
-                  doc.content[1].alignment = 'left';
-                  doc.content[1].margin = [0, 0, 0, 10];
+                  // Ajustar messageTop (Fecha + filtros aplicados)
+                  if (doc.content[1] && doc.content[1].alignment !== undefined) {
+                      doc.content[1].alignment = 'left';
+                      doc.content[1].margin = [0, 0, 0, 10];
+                      doc.content[1].fontSize = 9;
+                  }
 
                   // Estilo general
                   doc.defaultStyle.fontSize = 9;
@@ -307,6 +348,9 @@
                       }, 100);
                   });
                   dt.draw();
+              },
+              messageTop: function () {
+                  return obtenerInfoReporte();
               }
           },
           // Botón Imprimir
@@ -333,9 +377,7 @@
                   dt.draw();
               },
               messageTop: function () {
-                  var f = new Date();
-                  var fecha = (f.getDate() < 10 ? '0' : '') + f.getDate() + "/" + ((f.getMonth() + 1) < 10 ? '0' : '') + (f.getMonth() + 1) + "/" + f.getFullYear();
-                  return "Fecha de reporte: " + fecha;
+                  return obtenerInfoReporte();
               },
               customize: function (win) {
                   // Remover links y scripts vacíos o rotos que causan error 404 /index en CodeIgniter

@@ -1,28 +1,19 @@
-<section class="content">
-  <div class="row">
-    <div class="col-xs-12">
-      <div class="box">
-        <div class="box-body">
-          <!-- <button class="btn btn-block btn-primary" style="width: 100px; margin-top: 10px;" id="cargOrden">Cargar Vale</button> -->
-          <table id="vales" class="table table-bordered table-hover">
-            <thead>
-              <tr> 
-                <th>Acciones</th>
-                <th>Nro Vale</th>
-                <th>Tipo</th>
-                <th>Fecha y hora</th>
-                <th>Establecimiento/Pañol</th>
-                <th>Responsable</th>
-                <th>Herramientas</th>
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-        </div><!-- /.box-body -->
-      </div><!-- /.box -->
-    </div><!-- /.col -->
-  </div><!-- /.row -->
+<!-- <button class="btn btn-block btn-primary" style="width: 100px; margin-top: 10px;" id="cargOrden">Cargar Vale</button> -->
+<table id="vales" class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>Acciones</th>
+      <th>Nro Vale</th>
+      <th>Tipo</th>
+      <th>Fecha y hora</th>
+      <th>Establecimiento/Pañol</th>
+      <th>Responsable</th>
+      <th>Herramientas</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
 <script>
 
 // Config Tabla
