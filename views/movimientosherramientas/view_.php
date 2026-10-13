@@ -64,20 +64,27 @@ function limpiar() {
     $('#vales').DataTable().ajax.reload();
 }
 
+// Abre #mdl-back sin animación (fade) y recarga la tabla de movimientos al cerrar
+function abrirModalMovimiento(data) {
+    var $mdl = $('#mdl-back');
+    $mdl.html(data);
+    // Se quita la clase fade solo durante la apertura: el modal aparece de una
+    $mdl.removeClass('fade').modal('show');
+    $mdl.one('hidden.bs.modal', function() {
+        $mdl.addClass('fade');
+        if ($('#vales').length && $.fn.DataTable.isDataTable('#vales')) {
+            $('#vales').DataTable().ajax.reload();
+        }
+    });
+}
+
 function nuevaSalida() {
     wo();
     $.ajax({
         type: 'GET',
         url: '<?php echo base_url(PAN); ?>Movimientoherramientas/nuevaSalida',
         success: function(data) {
-            $('#mdl-back').html(data);
-            $('#mdl-back').modal('show');
-            // Al cerrar el modal, recargar la tabla de movimientos
-            $('#mdl-back').one('hidden.bs.modal', function() {
-                if ($('#vales').length && $.fn.DataTable.isDataTable('#vales')) {
-                    $('#vales').DataTable().ajax.reload();
-                }
-            });
+            abrirModalMovimiento(data);
             wc();
 
         },
@@ -94,15 +101,7 @@ function nuevaRecepcion() {
         type: 'GET',
         url: '<?php echo base_url(PAN); ?>Movimientoherramientas/nuevaRecepcion',
         success: function(data) {
-            
-            $('#mdl-back').html(data);
-            $('#mdl-back').modal('show');
-            // Al cerrar el modal, recargar la tabla de movimientos
-            $('#mdl-back').one('hidden.bs.modal', function() {
-                if ($('#vales').length && $.fn.DataTable.isDataTable('#vales')) {
-                    $('#vales').DataTable().ajax.reload();
-                }
-            });
+            abrirModalMovimiento(data);
             wc();
         },
         error: function() {
