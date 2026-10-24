@@ -139,6 +139,29 @@ class Order extends CI_Controller {
 		}
 		$herramEst['_put_herramientas_estado'] = $est;
 		$this->Orders->setEstadoHerramientas($herramEst);
+
+		// REQ-ASSET-ALM F6: si el panolero asocio una OT, escribirla en assetv2 (origen PANOLERO).
+		$otId = $this->input->post('ot_id');
+		if ($otId) {
+			$ok = $this->Orders->asociarOtAVale($otId, $sapa_id, $herram);
+			if (!$ok) {
+				log_message('ERROR','#TRAZA|TRAZ-COMP-PAN|ORDER|GUARDAR >> no se pudo asociar la OT '.$otId.' al vale '.$sapa_id);
+			}
+		}
 		echo json_encode($sapa_id);
 	}
+
+	// REQ-ASSET-ALM F6: modo de asociacion de OT (para el modal de salida).
+	public function configAsociarOt()
+	{
+		echo json_encode(array('modo' => $this->Orders->configAsociarOt()));
+	}
+
+	// REQ-ASSET-ALM F6: OTs sin cerrar del mantenedor (usrId de asset).
+	public function otsSinCerrar($usrId = null)
+	{
+		if (!$usrId) { $usrId = $this->input->post('usrId'); }
+		echo json_encode($this->Orders->otsSinCerrar($usrId));
+	}
+
 }

@@ -138,6 +138,27 @@
             </table>
         </div>
         <!--_____________________________________________-->
+        <!-- REQ-ASSET-ALM F6: asociacion de la OT al entregar herramientas -->
+        <div class="col-md-12 col-sm-12 col-xs-12" id="bloqueAsociarOt" style="display:none">
+            <div class="box box-solid" style="border:1px solid #ddd;padding:10px;border-radius:4px">
+                <h4 style="margin-top:0"><i class="fa fa-wrench"></i> Asociar a Orden de Trabajo
+                    <small id="asociarOtModo" class="text-muted"></small>
+                </h4>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Mantenedor (usrId de Asset)</label>
+                        <input type="number" class="form-control" id="otUsrId" placeholder="usrId del mantenedor">
+                    </div>
+                    <div class="col-md-3">
+                        <label>&nbsp;</label><br>
+                        <button type="button" class="btn btn-default" id="btnBuscarOts"><i class="fa fa-search"></i> Buscar OTs</button>
+                    </div>
+                </div>
+                <div id="listaOts" style="margin-top:10px"></div>
+                <input type="hidden" id="ot_id" name="ot_id" value="">
+                <p class="text-muted" id="sinOtsPanol" style="display:none">No hay OTs sin cerrar para ese mantenedor.</p>
+            </div>
+        </div>
         <!--_________________SEPARADOR_________________-->
         <div class="col-md-12">
           <hr>
@@ -358,9 +379,16 @@ async function guardar(){
       herramientas.push(herr);
   });
   var tools = JSON.stringify(herramientas);
+  // REQ-ASSET-ALM F6: OT asociada (segun modo de configuraciones_panol)
+  var ot_id = $('#ot_id').val();
+  if (window.ASOCIAR_OT_MODO === 'OBLIGATORIA' && !ot_id) {
+      wc();
+      alertify.error('Debe asociar una Orden de Trabajo para entregar (configuracion OBLIGATORIA).');
+      return;
+  }
   $.ajax({
       type: 'POST',
-      data:{datos, tools},
+      data:{datos, tools, ot_id},
       url: 'index.php/<?php echo PAN ?>Order/guardar',
       success: function(result) {
         $("#frm_salida")[0].reset();
@@ -414,5 +442,39 @@ $("#tools").select2({
     width: 'resolve', // need to override the changed default
     allowClear: true
 });
+
+
+// === REQ-ASSET-ALM F6: asociacion de OT al entregar ===
+window.ASOCIAR_OT_MODO = 'NO_APLICA';
+(function(){
+  $.ajax({ type:'GET', dataType:'json', url:'index.php/<?php echo PAN ?>Order/configAsociarOt',
+    success:function(r){
+      window.ASOCIAR_OT_MODO = (r && r.modo) ? r.modo : 'NO_APLICA';
+      if (window.ASOCIAR_OT_MODO === 'NO_APLICA') { $('#bloqueAsociarOt').hide(); return; }
+      $('#bloqueAsociarOt').show();
+      var txt = window.ASOCIAR_OT_MODO === 'OBLIGATORIA' ? '(obligatoria)' : '(optativa)';
+      $('#asociarOtModo').text(txt);
+    }
+  });
+})();
+$(document).on('click','#btnBuscarOts',function(){
+  var usrId = $('#otUsrId').val();
+  if(!usrId){ alertify.error('Ingrese el usrId del mantenedor'); return; }
+  $.ajax({ type:'POST', dataType:'json', url:'index.php/<?php echo PAN ?>Order/otsSinCerrar',
+    data:{ usrId:usrId },
+    success:function(ots){
+      ots = ots || [];
+      var h = '';
+      for(var i=0;i<ots.length;i++){
+        var o = ots[i];
+        h += '<div class="radio"><label><input type="radio" name="otradio" value="'+o.id_orden+'"> OT N° '+o.id_orden+' — estado '+o.estado+' '+(o.fecha? '('+o.fecha+')':'')+'</label></div>';
+      }
+      $('#listaOts').html(h);
+      $('#sinOtsPanol').toggle(ots.length===0);
+      $('#ot_id').val('');
+    }
+  });
+});
+$(document).on('change','input[name="otradio"]',function(){ $('#ot_id').val($(this).val()); });
 
 </script>

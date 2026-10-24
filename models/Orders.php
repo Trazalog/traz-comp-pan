@@ -137,4 +137,45 @@ class Orders extends CI_Model {
 		return $aux;
 	}
 
+
+	// === REQ-ASSET-ALM F6: asociacion de OT al entregar herramientas ===
+
+	/** Modo de asociacion de OT (OBLIGATORIA|OPTATIVA|NO_APLICA). Lee core.tablas. */
+	function configAsociarOt()
+	{
+		$aux = $this->rest->callAPI("GET", REST_CORE."/tabla/configuraciones_panol/valor/ASOCIAR_OT/empresa/".empresa());
+		$resp = json_decode($aux['data'], true);
+		$modo = isset($resp['configuracion']['valor']) ? $resp['configuracion']['valor'] : 'NO_APLICA';
+		return $modo ? $modo : 'NO_APLICA';
+	}
+
+	/** OTs asignadas al mantenedor (usrId de asset) que todavia no cerro. def. 4 */
+	function otsSinCerrar($usrId)
+	{
+		$aux = $this->rest->callAPI("GET", REST_MAN."/ots/sin-cerrar/usuario/".$usrId."/empresa/".empresa());
+		$resp = json_decode($aux['data'], true);
+		if (!isset($resp['ordenes']['orden'])) { return array(); }
+		$o = $resp['ordenes']['orden'];
+		if (isset($o['id_orden'])) { $o = array($o); }
+		return $o;
+	}
+
+	/** Escribe en assetv2 la asociacion vale->OT y sus herramientas (origen PANOLERO). def. 5/8 */
+	function asociarOtAVale($otId, $sapa, $herrIds)
+	{
+		$cab = array('_post_ot_vale' => array(
+			'otId' => (string)$otId, 'sapa_id' => (string)$sapa, 'origen' => 'PANOLERO',
+			'usrId' => (string)userId(), 'id_empresa' => (string)empresa()
+		));
+		$r = $this->rest->callAPI("POST", REST_MAN."/ot/vale", $cab);
+		if (empty($r['status'])) { return false; }
+		foreach ($herrIds as $h) {
+			$det = array('_post_ot_herramienta-usada' => array(
+				'otId' => (string)$otId, 'herrId' => (string)$h, 'sapa_id' => (string)$sapa, 'id_empresa' => (string)empresa()
+			));
+			$this->rest->callAPI("POST", REST_MAN."/ot/herramienta-usada", $det);
+		}
+		return true;
+	}
+
 }
