@@ -24,7 +24,7 @@
 <!-- /// ----------------------------------- HEADER ----------------------------------- /// -->
 
 <!---/////--- BOX 1 ---/////--->
-<div class="box box-primary animated bounceInDown" id="boxDatos">
+<div class="box box-primary" id="boxDatos">
 			<!--_____________________________________________-->
 
 			<div class="box-body">
