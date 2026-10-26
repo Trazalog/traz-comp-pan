@@ -16,6 +16,11 @@
     padding: 0 3px !important;
 }
 
+/* Select2 dentro del modal de agregar: el dropdown debe quedar por encima del modal */
+#modalAgregar .select2-container {
+    z-index: 1080;
+}
+
 /* Evitar que al pasar el mouse vuelva a aparecer fondo */
 .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
     background-color: transparent !important;
@@ -23,143 +28,145 @@
 }
 
 </style>
-<!---///--- BOX 1 ---///----->
-<div class="box box-primary animated bounceInDown" id="boxDatos" hidden>
-    <div class="box-header with-border">
-        <div class="box-tittle">
-            <h4>Detalle de Herramienta</h4>
+<!---///--- MODAL AGREGAR (antes BOX 1) ---///----->
+<div class="modal fade bs-example-modal-lg" id="modalAgregar" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-blue">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" style="color:white;">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myLargeModalLabel" style="color:white; margin: 5px 0 0 0;">Detalle de Herramienta</h4>
+            </div>
+            <!--_____________________________________________-->
+            <div class="modal-body">
+              <form class="formHerramientas" id="formHerramientas">
+                <div class="form-horizontal">
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <!--_____________ ESTABLECIMIENTOS _____________-->
+                        <div class="form-group">
+                          <label for="esta_id" class="col-sm-4 control-label">Establecimiento:</label>
+                          <div class="col-sm-8">
+                            <select id="esta_id" name="esta_id" class="form-control selec_habilitar requerido">
+                                <option value="-1" disabled selected>-Seleccione opcion-</option>
+                                <?php
+                                    foreach ($establecimientos as $establec) {
+                                        echo '<option  value="'.$establec->esta_id.'">'.$establec->nombre.'</option>';
+                                    }
+                                ?>
+                            </select>
+                          </div>
+                        </div>
+                      <!--___________________________-->
+                      <!--_____________ CODIGO _____________-->
+                        <div class="form-group">
+                          <label for="codigo" class="col-sm-4 control-label">Código:</label>
+                          <div class="col-sm-8">
+                            <input type="text" id="codigo" name="codigo" class="form-control requerido" placeholder="Ingrese Código...">
+                          </div>
+                        </div>
+                      <!--___________________________-->
+                      <!--_____________ DESCRIPCION _____________-->
+                        <div class="form-group">
+                          <label for="descripcion" class="col-sm-4 control-label">Descripción:</label>
+                          <div class="col-sm-8">
+                            <input type="text" id="descripcion" name="descripcion" class="form-control requerido" placeholder="Ingrese Descripcion...">
+                          </div>
+                        </div>
+                      <!--___________________________-->
+                      <!--_____________ MODELO _____________-->
+                        <div class="form-group">
+                          <label for="modelo" class="col-sm-4 control-label">Modelo:</label>
+                          <div class="col-sm-8">
+                            <input type="text" id="modelo" name="modelo" class="form-control requerido">
+                          </div>
+                        </div>
+                      <!--___________________________-->
+                    </div>
+                    <div class="col-sm-6">
+                      <!--_____________ PANOL _____________-->
+                        <div class="form-group">
+                          <label for="pano_id" class="col-sm-4 control-label">Pañol:</label>
+                          <div class="col-sm-8">
+                            <select id="pano_id" name="pano_id" class="form-control selec_habilitar requerido">
+                                <option value="-1" disabled selected>-Seleccione opcion-</option>
+                                <?php
+                                    if(isset($panoles) && is_array($panoles)) {
+                                        foreach ($panoles as $panol) {
+                                            echo '<option  value="'.$panol->pano_id.'">'.$panol->nombre.'</option>';
+                                        }
+                                    }
+                                ?>
+                            </select>
+                          </div>
+                        </div>
+                      <!--___________________________-->
+                      <!--_____________ TIPO _____________-->
+                        <div class="form-group">
+                          <label for="tipo" class="col-sm-4 control-label">Tipo:</label>
+                          <div class="col-sm-8">
+                            <select id="tipo" name="tipo[]" class="form-control requerido" multiple style="width: 100%;">
+                                <?php foreach ($tipos_herramienta as $tipo): ?>
+
+                                    <?php
+                                        $color = !empty($tipo->valor2)
+                                            ? $tipo->valor2
+                                            : '#808080';
+                                    ?>
+
+                                    <option
+                                        value="<?= htmlspecialchars($tipo->valor) ?>"
+                                        data-color="<?= htmlspecialchars($color) ?>"
+                                    >
+                                        <?= htmlspecialchars($tipo->descripcion) ?>
+                                    </option>
+
+                                <?php endforeach; ?>
+                            </select>
+                          </div>
+                        </div>
+                      <!--___________________________-->
+                      <!--_____________ MARCA _____________-->
+                        <div class="form-group">
+                          <label for="marca" class="col-sm-4 control-label">Marca:</label>
+                          <div class="col-sm-8">
+                            <select id="marca" name="marca" class="form-control selec_habilitar requerido">
+                                <option value="-1" disabled selected>-Seleccione opcion-</option>
+                                <?php
+                                    foreach ($marcas as $mar) {
+                                        echo '<option  value="'.$mar->tabl_id.'">'.$mar->valor.'</option>';
+                                    }
+                                ?>
+                            </select>
+                          </div>
+                        </div>
+                      <!--___________________________-->
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <!--_________________ GUARDAR_________________-->
+            <div class="modal-footer">
+                <div class="form-group text-right">
+                    <button type="button" class="btn btn-primary" onclick="guardar('nueva')">Guardar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
         </div>
-        <div class="box-tools pull-right border ">
-            <button type="button" id="btnclose" title="cerrar" class="btn btn-box-tool" data-widget="remove"
-                data-toggle="tooltip" title="" data-original-title="Remove">
-                <i class="fa fa-times"></i>
-            </button>
-        </div>
-    </div>
-    <!--_____________________________________________-->
-    <div class="box-body">
-        <form class="formHerramientas" id="formHerramientas">
-            <!--Establecimientos-->
-            <div class="col-md-6 col-sm-6 col-xs-12">
-              <div class="form-group">
-              <label for="esta_id">Establecimientos<strong style="color: #dd4b39">*</strong>:</label>
-              <select type="text" id="esta_id" name="" class="form-control selec_habilitar requerido" >
-                  <option value="-1" disabled selected>-Seleccione opcion-</option>
-                  <?php
-                      foreach ($establecimientos as $establec) {
-                          echo '<option  value="'.$establec->esta_id.'">'.$establec->nombre.'</option>';
-                      }
-                  ?>
-              </select>
-              </div>
-            </div>
-            <!--________________-->
-            <!--Pañol-->
-            <div class="col-md-6 col-sm-6 col-xs-12">
-                <div class="form-group">
-                <label for="pano_id">Pañol<strong style="color: #dd4b39">*</strong>:</label>
-                <select type="text" id="pano_id" name="pano_id" class="form-control selec_habilitar requerido" >
-                    <option value="-1" disabled selected>-Seleccione opcion-</option>
-                    <?php
-                        if(isset($panoles) && is_array($panoles)) {
-                            foreach ($panoles as $panol) {
-                                echo '<option  value="'.$panol->pano_id.'">'.$panol->nombre.'</option>';
-                            }
-                        }
-                    ?>
-                </select>
-                </div>
-            </div>
-            <!--________________-->
-            <!--Código-->
-            <div class="col-md-6 col-sm-6 col-xs-12">
-                <div class="form-group">
-                  <label for="codigo">Código <strong style="color: #dd4b39">*</strong>:</label>
-                  <input type="text" id="codigo" name="codigo" class="form-control requerido" placeholder="Ingrese Código...">
-                </div>
-            </div>
-            <!--________________-->
-            <!--Descripcion-->
-            <div class="col-md-6 col-sm-6 col-xs-12">
-                <div class="form-group">
-                  <label for="descripcion">Descripción <strong style="color: #dd4b39">*</strong>:</label>
-                  <input type="text" id="descripcion" name="descripcion" class="form-control requerido" placeholder="Ingrese Descripcion...">
-                </div>
-            </div>
-            <!--________________-->
-            <!--Modelo-->
-            <div class="col-md-6 col-sm-6 col-xs-12">
-                <div class="form-group">
-                <label for="modelo">Modelo <strong style="color: #dd4b39">*</strong>:</label>
-                <input type="text" id="modelo" name="modelo" class="form-control requerido">
-                </div>
-            </div>
-            <!--________________-->
-            <!-- Tipo -->
-            <div class="col-md-6 col-sm-6 col-xs-12">
-                <div class="form-group">
-                    <label for="tipo">
-                        Tipo <strong style="color: #dd4b39">*</strong>:
-                    </label>
-
-                    <select id="tipo" name="tipo[]" class="form-control requerido" multiple>
-                        <?php foreach ($tipos_herramienta as $tipo): ?>
-
-                            <?php
-                                $color = !empty($tipo->valor2)
-                                    ? $tipo->valor2
-                                    : '#808080';
-                            ?>
-
-                            <option
-                                value="<?= htmlspecialchars($tipo->valor) ?>"
-                                data-color="<?= htmlspecialchars($color) ?>"
-                            >
-                                <?= htmlspecialchars($tipo->descripcion) ?>
-                            </option>
-
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
-            <!--________________-->
-            <!-- Forzar nueva fila por fix -->
-            <div class="clearfix"></div>
-            <!--Marca-->
-            <div class="col-md-6 col-sm-6 col-xs-12">
-                <div class="form-group">
-                <label for="marca">Marca <strong style="color: #dd4b39">*</strong>:</label>
-                  <select type="text" id="marca" name="marca" class="form-control selec_habilitar requerido" >
-                    <option value="-1" disabled selected>-Seleccione opcion-</option>
-                    <?php
-                        foreach ($marcas as $mar) {
-                            echo '<option  value="'.$mar->tabl_id.'">'.$mar->valor.'</option>';
-                        }
-                    ?>
-                  </select>
-                </div>
-            </div>
-            <!--________________-->
-        </form>
-        </div>
-        <!--_________________ GUARDAR_________________-->
-        <div class="modal-footer">
-					<div class="form-group text-right">
-          <button type="button" class="btn btn-primary" onclick="guardar('nueva')" >Guardar</button>
-				</div>                
-        <!--__________________________________-->
     </div>
 </div>
-<!---///--- FIN BOX 1 ---///----->
+<!---///--- FIN MODAL AGREGAR ---///----->
 
 <!---///--- BOX ACCIONES (AGREGAR) ---///----->
 <div class="box box-primary">
     <div class="box-header with-border">
-        <h4 class="box-title"><i class="fa fa-list"></i> Herramientas</h4>
+        <h4 class="box-title">Herramientas</h4>
     </div>
     <div class="box-body" style="padding: 10px;">
         <button type="button" id="botonAgregar" class="btn btn-block btn-primary" style="width: 100px;" aria-label="Left Align">
-            <i class="fa fa-plus"></i> Agregar
+            Agregar
         </button>
     </div>
 </div>
@@ -380,15 +387,18 @@
   // Boton Agregar
   // -------------------------------------------------------
   $('#botonAgregar').on('click', function() {
-    $('#botonAgregar').attr('disabled', '');
-    $('#boxDatos').focus();
-    $('#boxDatos').show();
+    $('#modalAgregar').modal('show');
   });
 
-  $('#btnclose').on('click', function() {
-    $('#boxDatos').hide(500);
+  $('#modalAgregar').on('shown.bs.modal', function() {
+    $('#tipo').select2('width', '100%');
+  });
+
+  $('#modalAgregar').on('hidden.bs.modal', function() {
+    $('#formHerramientas')[0].reset();
+    $('#pano_id').empty().append('<option value="-1" disabled selected>-Seleccione opcion-</option>');
+    $('#tipo').val(null).trigger('change');
     $('#botonAgregar').removeAttr('disabled');
-    $('#formDatos')[0].reset();
   });
 
   // -------------------------------------------------------
@@ -557,7 +567,7 @@ function guardar(operacion) {
     } else {
       $("#cargar_tabla").load("<?php echo base_url(PAN); ?>Herramienta/listarHerramientas");
     }
-    $('#boxDatos').hide(500);
+    $('#modalAgregar').modal('hide');
     $('#formHerramientas')[0].reset();
     $('#tipo').val(null).trigger('change'); // Limpia el Select2 múltiple
     $('#botonAgregar').removeAttr('disabled');
