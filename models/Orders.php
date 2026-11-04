@@ -152,7 +152,8 @@ class Orders extends CI_Model {
 	/** OTs asignadas al mantenedor (usrId de asset) que todavia no cerro. def. 4 */
 	function otsSinCerrar($usrId)
 	{
-		$aux = $this->rest->callAPI("GET", REST_MAN."/ots/sin-cerrar/usuario/".$usrId."/empresa/".empresa());
+		$this->load->helper(MAN.'man');
+		$aux = $this->rest->callAPI("GET", REST_MAN."/ots/sin-cerrar/usuario/".$usrId."/empresa/".man_empresa());
 		$resp = json_decode($aux['data'], true);
 		if (!isset($resp['ordenes']['orden'])) { return array(); }
 		$o = $resp['ordenes']['orden'];
@@ -163,15 +164,19 @@ class Orders extends CI_Model {
 	/** Escribe en assetv2 la asociacion vale->OT y sus herramientas (origen PANOLERO). def. 5/8 */
 	function asociarOtAVale($otId, $sapa, $herrIds)
 	{
+		// assetv2 numera empresas y usuarios distinto que tools: con empresa() el vale no se ve en la OT.
+		$this->load->helper(MAN.'man');
+		$emp = man_empresa();
+		if ($emp === null) { return false; }
 		$cab = array('_post_ot_vale' => array(
 			'otId' => (string)$otId, 'sapa_id' => (string)$sapa, 'origen' => 'PANOLERO',
-			'usrId' => (string)userId(), 'id_empresa' => (string)empresa()
+			'usrId' => (string)man_usuario(), 'id_empresa' => (string)$emp
 		));
 		$r = $this->rest->callAPI("POST", REST_MAN."/ot/vale", $cab);
 		if (empty($r['status'])) { return false; }
 		foreach ($herrIds as $h) {
 			$det = array('_post_ot_herramienta-usada' => array(
-				'otId' => (string)$otId, 'herrId' => (string)$h, 'sapa_id' => (string)$sapa, 'id_empresa' => (string)empresa()
+				'otId' => (string)$otId, 'herrId' => (string)$h, 'sapa_id' => (string)$sapa, 'id_empresa' => (string)$emp
 			));
 			$this->rest->callAPI("POST", REST_MAN."/ot/herramienta-usada", $det);
 		}
